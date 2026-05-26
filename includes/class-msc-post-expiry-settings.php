@@ -634,18 +634,19 @@ class Settings {
 		if ( isset( $_POST['mscpe_seo_nonce'] ) ) {
 			$nonce = sanitize_text_field( wp_unslash( $_POST['mscpe_seo_nonce'] ) );
 			if ( wp_verify_nonce( $nonce, 'mscpe_seo_settings' ) && current_user_can( 'manage_options' ) ) {
-				$seo->save_options( $_POST );
+				$seo_data = array(
+					'noindex_enabled'    => isset( $_POST['noindex_enabled'] ) ? 1 : 0,
+					'nofollow_enabled'   => isset( $_POST['nofollow_enabled'] ) ? 1 : 0,
+					'canonical_strategy' => isset( $_POST['canonical_strategy'] ) ? sanitize_key( wp_unslash( $_POST['canonical_strategy'] ) ) : '',
+					'status_code'        => isset( $_POST['status_code'] ) ? sanitize_key( wp_unslash( $_POST['status_code'] ) ) : '',
+				);
+				$seo->save_options( $seo_data );
 				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'SEO settings saved.', 'msc-post-expiry' ) . '</p></div>';
 			}
 		}
 
 		$seo_options = get_option( 'mscpe_seo_options', array() );
-		$defaults    = array(
-			'noindex_expired'  => 1,
-			'nofollow_expired' => 0,
-			'canonical_mode'   => 'none',
-			'status_code'      => '200',
-		);
+		$defaults    = SEO::get_default_options();
 		$seo_options = wp_parse_args( $seo_options, $defaults );
 		?>
 		<div style="max-width:800px;margin-top:1.5em;">
@@ -661,7 +662,7 @@ class Settings {
 							<th scope="row"><?php esc_html_e( 'Noindex', 'msc-post-expiry' ); ?></th>
 							<td>
 								<label>
-									<input type="checkbox" name="noindex_expired" value="1" <?php checked( 1, (int) $seo_options['noindex_expired'] ); ?> />
+									<input type="checkbox" name="noindex_enabled" value="1" <?php checked( 1, (int) $seo_options['noindex_enabled'] ); ?> />
 									<?php esc_html_e( 'Add noindex to expired posts (prevents indexing).', 'msc-post-expiry' ); ?>
 								</label>
 							</td>
@@ -670,18 +671,18 @@ class Settings {
 							<th scope="row"><?php esc_html_e( 'Nofollow', 'msc-post-expiry' ); ?></th>
 							<td>
 								<label>
-									<input type="checkbox" name="nofollow_expired" value="1" <?php checked( 1, (int) $seo_options['nofollow_expired'] ); ?> />
+									<input type="checkbox" name="nofollow_enabled" value="1" <?php checked( 1, (int) $seo_options['nofollow_enabled'] ); ?> />
 									<?php esc_html_e( 'Add nofollow to expired posts (prevents link following).', 'msc-post-expiry' ); ?>
 								</label>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="canonical_mode"><?php esc_html_e( 'Canonical', 'msc-post-expiry' ); ?></label></th>
+							<th scope="row"><label for="canonical_strategy"><?php esc_html_e( 'Canonical', 'msc-post-expiry' ); ?></label></th>
 							<td>
-								<select id="canonical_mode" name="canonical_mode">
-									<option value="none" <?php selected( 'none', $seo_options['canonical_mode'] ); ?>><?php esc_html_e( 'No change', 'msc-post-expiry' ); ?></option>
-									<option value="home" <?php selected( 'home', $seo_options['canonical_mode'] ); ?>><?php esc_html_e( 'Point to home page', 'msc-post-expiry' ); ?></option>
-									<option value="category" <?php selected( 'category', $seo_options['canonical_mode'] ); ?>><?php esc_html_e( 'Point to primary category', 'msc-post-expiry' ); ?></option>
+								<select id="canonical_strategy" name="canonical_strategy">
+									<option value="none" <?php selected( 'none', $seo_options['canonical_strategy'] ); ?>><?php esc_html_e( 'No change', 'msc-post-expiry' ); ?></option>
+									<option value="homepage" <?php selected( 'homepage', $seo_options['canonical_strategy'] ); ?>><?php esc_html_e( 'Point to home page', 'msc-post-expiry' ); ?></option>
+									<option value="category" <?php selected( 'category', $seo_options['canonical_strategy'] ); ?>><?php esc_html_e( 'Point to primary category', 'msc-post-expiry' ); ?></option>
 								</select>
 							</td>
 						</tr>

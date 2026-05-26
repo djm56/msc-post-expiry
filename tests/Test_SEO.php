@@ -72,7 +72,7 @@ class Test_SEO extends MSCPE_Test_Case {
 		$this->assertArrayHasKey( 'noindex_enabled', $defaults );
 		$this->assertArrayHasKey( 'nofollow_enabled', $defaults );
 		$this->assertArrayHasKey( 'canonical_strategy', $defaults );
-		$this->assertArrayHasKey( 'custom_canonical_url', $defaults );
+		$this->assertArrayHasKey( 'status_code', $defaults );
 	}
 
 	/**
@@ -81,9 +81,9 @@ class Test_SEO extends MSCPE_Test_Case {
 	public function test_default_option_values() {
 		$defaults = SEO::get_default_options();
 		$this->assertSame( 1, $defaults['noindex_enabled'] );
-		$this->assertSame( 1, $defaults['nofollow_enabled'] );
-		$this->assertSame( 'category', $defaults['canonical_strategy'] );
-		$this->assertSame( '', $defaults['custom_canonical_url'] );
+		$this->assertSame( 0, $defaults['nofollow_enabled'] );
+		$this->assertSame( 'none', $defaults['canonical_strategy'] );
+		$this->assertSame( '200', $defaults['status_code'] );
 	}
 
 	/**
@@ -129,7 +129,7 @@ class Test_SEO extends MSCPE_Test_Case {
 		) );
 
 		$saved = get_option( 'mscpe_seo_options' );
-		$this->assertSame( 'category', $saved['canonical_strategy'] );
+		$this->assertSame( 'none', $saved['canonical_strategy'] );
 	}
 
 	/**

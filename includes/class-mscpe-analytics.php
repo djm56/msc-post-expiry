@@ -214,19 +214,22 @@ class Analytics {
 		$where = $this->build_where_clause( $date_range, $filters );
 
 		if ( ! empty( $where['args'] ) ) {
-			// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- placeholders are in $where['sql'].
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- table is from $wpdb->prefix; WHERE from build_where_clause() with parameterized args.
 			$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
 				$wpdb->prepare(
-					"SELECT action, COUNT(*) as count FROM {$table} {$where['sql']} GROUP BY action ORDER BY count DESC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					"SELECT action, COUNT(*) as count FROM {$table} {$where['sql']} GROUP BY action ORDER BY count DESC",
 					$where['args']
 				),
 				ARRAY_A
 			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		} else {
-			$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is from $wpdb->prefix; no user input in this branch.
+			$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
 				"SELECT action, COUNT(*) as count FROM {$table} GROUP BY action ORDER BY count DESC",
 				ARRAY_A
 			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 
 		$labels = array(
@@ -278,18 +281,19 @@ class Analytics {
 
 		$prepare_args = array_merge( array( $date_format ), $where['args'] );
 
-		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- placeholders are in $where['sql'].
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is from $wpdb->prefix; WHERE from build_where_clause() with parameterized args.
 		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$wpdb->prepare(
 				"SELECT DATE_FORMAT(FROM_UNIXTIME(created_at), %s) as date_group, COUNT(*) as count 
 				FROM {$table} 
 				{$where['sql']} 
 				GROUP BY date_group 
-				ORDER BY date_group ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				ORDER BY date_group ASC",
 				$prepare_args
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$data = array();
 		foreach ( $results as $row ) {
@@ -319,7 +323,7 @@ class Analytics {
 
 		$prepare_args = array_merge( $where['args'], array( $limit ) );
 
-		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- placeholders are in $where['sql'].
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is from $wpdb->prefix; WHERE from build_where_clause() with parameterized args.
 		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$wpdb->prepare(
 				"SELECT a.category_id, t.name as category_name, COUNT(*) as count 
@@ -328,11 +332,12 @@ class Analytics {
 				{$where['sql']} 
 				GROUP BY a.category_id 
 				ORDER BY count DESC 
-				LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				LIMIT %d",
 				$prepare_args
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$data = array();
 		foreach ( $results as $row ) {
@@ -362,7 +367,7 @@ class Analytics {
 
 		$prepare_args = array_merge( $where['args'], array( $limit ) );
 
-		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- placeholders are in $where['sql'].
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is from $wpdb->prefix; WHERE from build_where_clause() with parameterized args.
 		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$wpdb->prepare(
 				"SELECT a.author_id, u.display_name as author_name, COUNT(*) as count 
@@ -371,11 +376,12 @@ class Analytics {
 				{$where['sql']} 
 				GROUP BY a.author_id 
 				ORDER BY count DESC 
-				LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				LIMIT %d",
 				$prepare_args
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$data = array();
 		foreach ( $results as $row ) {
@@ -400,17 +406,19 @@ class Analytics {
 
 		$table = $wpdb->prefix . 'mscpe_analytics';
 
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is from $wpdb->prefix.
 		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$wpdb->prepare(
 				"SELECT a.*, p.post_title 
 				FROM {$table} a 
 				LEFT JOIN {$wpdb->posts} p ON p.ID = a.post_id 
 				ORDER BY a.created_at DESC 
-				LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from $wpdb->prefix.
+				LIMIT %d",
 				absint( $limit )
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return array_map(
 			function ( $row ) {
@@ -509,6 +517,22 @@ class Analytics {
 		$top_categories   = $this->get_top_categories( $date_range, 5, $filters );
 		$top_authors      = $this->get_top_authors( $date_range, 5, $filters );
 		$recent_entries   = $this->get_recent_entries( 10 );
+
+		// Empty state: no analytics data yet.
+		if ( empty( $summary['total_expired'] ) ) {
+			echo '<div class="mscpe-analytics-dashboard">';
+			echo '<div class="notice notice-info inline">';
+			echo '<p><strong>' . esc_html__( 'No Analytics Data Yet', 'msc-post-expiry' ) . '</strong></p>';
+			echo '<p>' . esc_html__( 'Analytics data will appear here once posts expire. Set expiry dates on posts to see activity.', 'msc-post-expiry' ) . '</p>';
+			echo '</div>';
+			echo '</div>';
+			return;
+		}
+
+		// Register chart initialization script to run after Chart.js loads.
+		$chart_js = $this->build_chart_scripts( $trends, $action_breakdown, $top_categories, $top_authors );
+		wp_add_inline_script( 'mscpe-chartjs', $chart_js, 'after' );
+
 		?>
 		<div class="mscpe-analytics-dashboard">
 			<div class="mscpe-analytics-controls">
@@ -555,53 +579,10 @@ class Analytics {
 				<div class="mscpe-chart-container">
 					<h3><?php esc_html_e( 'Expiry Trends', 'msc-post-expiry' ); ?></h3>
 					<canvas id="mscpe-trends-chart"></canvas>
-					<script>
-					(function() {
-						var ctx = document.getElementById('mscpe-trends-chart');
-						if (ctx && typeof Chart !== 'undefined') {
-							new Chart(ctx, {
-								type: 'line',
-								data: {
-									labels: <?php echo wp_json_encode( wp_list_pluck( $trends, 'label' ) ); ?>,
-									datasets: [{
-										label: '<?php esc_attr_e( 'Posts Expired', 'msc-post-expiry' ); ?>',
-										data: <?php echo wp_json_encode( wp_list_pluck( $trends, 'count' ) ); ?>,
-										borderColor: '#2271b1',
-										backgroundColor: 'rgba(34, 113, 177, 0.1)',
-										fill: true,
-										tension: 0.3
-									}]
-								},
-								options: {
-									responsive: true,
-									maintainAspectRatio: true,
-									plugins: { legend: { display: false } },
-									scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-								}
-							});
-						}
-					})();
-					</script>
 				</div>
 				<div class="mscpe-chart-container">
 					<h3><?php esc_html_e( 'Action Breakdown', 'msc-post-expiry' ); ?></h3>
 					<canvas id="mscpe-actions-chart"></canvas>
-					<script>
-					(function() {
-						var ctx = document.getElementById('mscpe-actions-chart');
-						if (ctx && typeof Chart !== 'undefined') {
-							var data = <?php echo wp_json_encode( $action_breakdown ); ?>;
-							new Chart(ctx, {
-								type: 'doughnut',
-								data: {
-									labels: data.map(function(item) { return item.label; }),
-									datasets: [{ data: data.map(function(item) { return item.count; }), backgroundColor: ['#2271b1','#f0c33c','#72aee6','#00a32a','#d63638','#8b5cf6'] }]
-								},
-								options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
-							});
-						}
-					})();
-					</script>
 				</div>
 			</div>
 
@@ -609,36 +590,10 @@ class Analytics {
 				<div class="mscpe-chart-container">
 					<h3><?php esc_html_e( 'Top Categories', 'msc-post-expiry' ); ?></h3>
 					<canvas id="mscpe-categories-chart"></canvas>
-					<script>
-					(function() {
-						var ctx = document.getElementById('mscpe-categories-chart');
-						if (ctx && typeof Chart !== 'undefined') {
-							var data = <?php echo wp_json_encode( $top_categories ); ?>;
-							new Chart(ctx, {
-								type: 'bar',
-								data: { labels: data.map(function(item) { return item.category_name; }), datasets: [{ label: '<?php esc_attr_e( 'Expired Posts', 'msc-post-expiry' ); ?>', data: data.map(function(item) { return item.count; }), backgroundColor: '#2271b1' }] },
-								options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-							});
-						}
-					})();
-					</script>
 				</div>
 				<div class="mscpe-chart-container">
 					<h3><?php esc_html_e( 'Top Authors', 'msc-post-expiry' ); ?></h3>
 					<canvas id="mscpe-authors-chart"></canvas>
-					<script>
-					(function() {
-						var ctx = document.getElementById('mscpe-authors-chart');
-						if (ctx && typeof Chart !== 'undefined') {
-							var data = <?php echo wp_json_encode( $top_authors ); ?>;
-							new Chart(ctx, {
-								type: 'bar',
-								data: { labels: data.map(function(item) { return item.author_name; }), datasets: [{ label: '<?php esc_attr_e( 'Expired Posts', 'msc-post-expiry' ); ?>', data: data.map(function(item) { return item.count; }), backgroundColor: '#72aee6' }] },
-								options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-							});
-						}
-					})();
-					</script>
 				</div>
 			</div>
 
@@ -697,5 +652,83 @@ class Analytics {
 		}
 		</style>
 		<?php
+	}
+
+	/**
+	 * Builds Chart.js initialization script.
+	 *
+	 * @param array $trends           Trend data.
+	 * @param array $action_breakdown Action breakdown data.
+	 * @param array $top_categories   Top categories data.
+	 * @param array $top_authors      Top authors data.
+	 * @return string JavaScript code.
+	 */
+	private function build_chart_scripts( $trends, $action_breakdown, $top_categories, $top_authors ) {
+		ob_start();
+		?>
+		(function() {
+			// Trends chart
+			var trendsCtx = document.getElementById('mscpe-trends-chart');
+			if (trendsCtx) {
+				new Chart(trendsCtx, {
+					type: 'line',
+					data: {
+						labels: <?php echo wp_json_encode( wp_list_pluck( $trends, 'label' ) ); ?>,
+						datasets: [{
+							label: '<?php echo esc_js( __( 'Posts Expired', 'msc-post-expiry' ) ); ?>',
+							data: <?php echo wp_json_encode( wp_list_pluck( $trends, 'count' ) ); ?>,
+							borderColor: '#2271b1',
+							backgroundColor: 'rgba(34, 113, 177, 0.1)',
+							fill: true,
+							tension: 0.3
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: true,
+						plugins: { legend: { display: false } },
+						scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+					}
+				});
+			}
+
+			// Actions chart
+			var actionsCtx = document.getElementById('mscpe-actions-chart');
+			if (actionsCtx) {
+				var actionData = <?php echo wp_json_encode( $action_breakdown ); ?>;
+				new Chart(actionsCtx, {
+					type: 'doughnut',
+					data: {
+						labels: actionData.map(function(item) { return item.label; }),
+						datasets: [{ data: actionData.map(function(item) { return item.count; }), backgroundColor: ['#2271b1','#f0c33c','#72aee6','#00a32a','#d63638','#8b5cf6'] }]
+					},
+					options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
+				});
+			}
+
+			// Categories chart
+			var categoriesCtx = document.getElementById('mscpe-categories-chart');
+			if (categoriesCtx) {
+				var catData = <?php echo wp_json_encode( $top_categories ); ?>;
+				new Chart(categoriesCtx, {
+					type: 'bar',
+					data: { labels: catData.map(function(item) { return item.category_name; }), datasets: [{ label: '<?php echo esc_js( __( 'Expired Posts', 'msc-post-expiry' ) ); ?>', data: catData.map(function(item) { return item.count; }), backgroundColor: '#2271b1' }] },
+					options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+				});
+			}
+
+			// Authors chart
+			var authorsCtx = document.getElementById('mscpe-authors-chart');
+			if (authorsCtx) {
+				var authorData = <?php echo wp_json_encode( $top_authors ); ?>;
+				new Chart(authorsCtx, {
+					type: 'bar',
+					data: { labels: authorData.map(function(item) { return item.author_name; }), datasets: [{ label: '<?php echo esc_js( __( 'Expired Posts', 'msc-post-expiry' ) ); ?>', data: authorData.map(function(item) { return item.count; }), backgroundColor: '#72aee6' }] },
+					options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+				});
+			}
+		})();
+		<?php
+		return ob_get_clean();
 	}
 }

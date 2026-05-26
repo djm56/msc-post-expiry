@@ -49,10 +49,10 @@ class SEO {
 	 * @var array<string,mixed>
 	 */
 	private static $default_options = array(
-		'noindex_enabled'      => 1,
-		'nofollow_enabled'     => 1,
-		'canonical_strategy'   => 'category',
-		'custom_canonical_url' => '',
+		'noindex_enabled'    => 1,
+		'nofollow_enabled'   => 0,
+		'canonical_strategy' => 'none',
+		'status_code'        => '200',
 	);
 
 	/**
@@ -71,6 +71,7 @@ class SEO {
 		$this->plugin = $plugin;
 
 		add_action( 'wp_head', array( $this, 'output_seo_meta' ), 1 );
+		add_action( 'template_redirect', array( $this, 'send_status_header' ) );
 	}
 
 	/**
@@ -89,6 +90,22 @@ class SEO {
 	 */
 	public function get_options() {
 		$options = get_option( self::OPTION_KEY, array() );
+
+		// Migration: Map old key names to new key names.
+		if ( isset( $options['noindex_expired'] ) && ! isset( $options['noindex_enabled'] ) ) {
+			$options['noindex_enabled'] = $options['noindex_expired'];
+			unset( $options['noindex_expired'] );
+		}
+		if ( isset( $options['nofollow_expired'] ) && ! isset( $options['nofollow_enabled'] ) ) {
+			$options['nofollow_enabled'] = $options['nofollow_expired'];
+			unset( $options['nofollow_expired'] );
+		}
+		if ( isset( $options['canonical_mode'] ) && ! isset( $options['canonical_strategy'] ) ) {
+			$old = $options['canonical_mode'];
+			$options['canonical_strategy'] = ( 'home' === $old ) ? 'homepage' : $old;
+			unset( $options['canonical_mode'] );
+		}
+
 		return wp_parse_args( $options, self::$default_options );
 	}
 
@@ -101,7 +118,7 @@ class SEO {
 	public function save_options( $options ) {
 		$defaults   = self::$default_options;
 		$clean      = array();
-		$clean_keys = array( 'noindex_enabled', 'nofollow_enabled', 'canonical_strategy', 'custom_canonical_url' );
+		$clean_keys = array( 'noindex_enabled', 'nofollow_enabled', 'canonical_strategy', 'status_code' );
 
 		foreach ( $clean_keys as $key ) {
 			if ( isset( $options[ $key ] ) ) {
@@ -111,17 +128,23 @@ class SEO {
 						$clean[ $key ] = ! empty( $options[ $key ] ) ? 1 : 0;
 						break;
 					case 'canonical_strategy':
-						$allowed       = array( 'category', 'homepage', 'custom' );
+						$allowed       = array( 'none', 'homepage', 'category' );
 						$clean[ $key ] = in_array( $options[ $key ], $allowed, true ) ? $options[ $key ] : $defaults['canonical_strategy'];
 						break;
-					case 'custom_canonical_url':
-						$clean[ $key ] = esc_url_raw( $options[ $key ] );
+					case 'status_code':
+						$allowed       = array( '200', '410' );
+						$clean[ $key ] = in_array( $options[ $key ], $allowed, true ) ? $options[ $key ] : $defaults['status_code'];
 						break;
 					default:
 						$clean[ $key ] = $options[ $key ];
 				}
 			} else {
-				$clean[ $key ] = $defaults[ $key ];
+				// Checkboxes not in POST data are unchecked — set to 0.
+				if ( in_array( $key, array( 'noindex_enabled', 'nofollow_enabled' ), true ) ) {
+					$clean[ $key ] = 0;
+				} else {
+					$clean[ $key ] = $defaults[ $key ];
+				}
 			}
 		}
 
@@ -136,6 +159,40 @@ class SEO {
 	 */
 	public function is_post_expired( $post_id ) {
 		return (bool) get_post_meta( $post_id, '_mscpe_expiry_processed', true );
+	}
+
+	/**
+	 * Sends the appropriate HTTP status header for expired posts.
+	 *
+	 * @return void
+	 */
+	public function send_status_header() {
+		if ( ! is_singular() ) {
+			return;
+		}
+
+		$post = get_post();
+		if ( ! $post ) {
+			return;
+		}
+
+		if ( ! $this->is_post_expired( $post->ID ) ) {
+			return;
+		}
+
+		// Check per-post meta first, then fall back to global setting.
+		$per_post_code = get_post_meta( $post->ID, self::META_KEY_STATUS_CODE, true );
+		if ( ! empty( $per_post_code ) ) {
+			$status_code = $per_post_code;
+		} else {
+			$options     = $this->get_options();
+			$status_code = $options['status_code'];
+		}
+
+		if ( '410' === (string) $status_code ) {
+			status_header( 410 );
+			nocache_headers();
+		}
 	}
 
 	/**
@@ -212,32 +269,25 @@ class SEO {
 	 * @return string|null
 	 */
 	public function get_canonical_url( $post ) {
-		// Check per-post custom canonical first.
-		$custom_canonical = (string) get_post_meta( $post->ID, self::META_KEY_CANONICAL, true );
-		if ( ! empty( $custom_canonical ) ) {
-			return $custom_canonical;
-		}
-
 		$options = $this->get_options();
 
 		switch ( $options['canonical_strategy'] ) {
+			case 'none':
+				return null;
+
 			case 'homepage':
 				return home_url( '/' );
 
-			case 'custom':
-				if ( ! empty( $options['custom_canonical_url'] ) ) {
-					return $options['custom_canonical_url'];
-				}
-				return null;
-
 			case 'category':
-			default:
 				$terms = get_the_terms( $post->ID, 'category' );
 				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 					$category = reset( $terms );
 					return get_term_link( $category );
 				}
 				return home_url( '/' );
+
+			default:
+				return null;
 		}
 	}
 
@@ -278,13 +328,19 @@ class SEO {
 				$canonical_url = home_url( '/' );
 				break;
 
-			case 'custom':
-				$canonical_url = $options['custom_canonical_url'];
+			case 'none':
+			default:
+				// No canonical URL set.
 				break;
 		}
 
 		if ( ! empty( $canonical_url ) && ! is_wp_error( $canonical_url ) ) {
 			update_post_meta( $post_id, self::META_KEY_CANONICAL, $canonical_url );
+		}
+
+		// Store status code preference for this expired post.
+		if ( '410' === $options['status_code'] ) {
+			update_post_meta( $post_id, self::META_KEY_STATUS_CODE, '410' );
 		}
 	}
 
