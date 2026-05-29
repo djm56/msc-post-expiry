@@ -63,7 +63,6 @@ register_deactivation_hook(
 add_action(
 	'plugins_loaded',
 	static function () {
-		load_plugin_textdomain( 'msc-post-expiry', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 		MSCPE\Plugin::instance();
 	}
 );
@@ -80,13 +79,13 @@ add_filter(
 		if ( ! isset( $schedules['mscpe_5min'] ) ) {
 			$schedules['mscpe_5min'] = array(
 				'interval' => 300,
-				'display'  => esc_html__( 'Every 5 minutes', 'msc-post-expiry' ),
+				'display'  => 'Every 5 minutes',
 			);
 		}
 		if ( ! isset( $schedules['mscpe_15min'] ) ) {
 			$schedules['mscpe_15min'] = array(
 				'interval' => 900,
-				'display'  => esc_html__( 'Every 15 minutes', 'msc-post-expiry' ),
+				'display'  => 'Every 15 minutes',
 			);
 		}
 		return $schedules;
