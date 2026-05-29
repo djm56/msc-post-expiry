@@ -2,10 +2,10 @@
 # This file is distributed under the GPL-2.0+ license.
 msgid ""
 msgstr ""
-"Project-Id-Version: MSC Post Expiry 1.3.0\n"
+"Project-Id-Version: MSC Post Expiry 1.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/msc-post-expiry\n"
-"POT-Creation-Date: 2026-05-03T12:00:00+00:00\n"
-"PO-Revision-Date: 2026-05-03 12:00:00+00:00\n"
+"POT-Creation-Date: 2026-05-29T12:09:24+00:00\n"
+"PO-Revision-Date: 2026-05-29 12:09:24+00:00\n"
 "Last-Translator: Anomalous Developers <dev@anomalous.co.za>\n"
 "Language-Team: Spanish (Mexico) <LL@li.org>\n"
 "Language: es_MX\n"
@@ -27,30 +27,173 @@ msgstr "Expirar automáticamente entradas y páginas en una fecha programada. Es
 msgid "Anomalous Developers"
 msgstr "Anomalous Developers"
 
-msgid "Every 5 minutes"
-msgstr "Cada 5 minutos"
+msgid "https://anomalous.co.za"
+msgstr "https://anomalous.co.za"
 
-msgid "Every 15 minutes"
-msgstr "Cada 15 minutos"
+msgid "Draft"
+msgstr "Borrador"
 
-msgid "No expiry set"
-msgstr "Sin vencimiento establecido"
+msgid "Private"
+msgstr "Privado"
 
-msgid "Expired"
-msgstr "Vencido"
+msgid "Trash"
+msgstr "Papelera"
 
-msgid "%d day remaining"
-msgid_plural "%d days remaining"
-msgstr[0] "%d día restante"
-msgstr[1] "%d días restantes"
+msgid "Category"
+msgstr "Categoría"
 
-msgid "%d hour remaining"
-msgid_plural "%d hours remaining"
-msgstr[0] "%d hora restante"
-msgstr[1] "%d horas restantes"
+msgid "Redirect"
+msgstr "Redirección"
 
-msgid "Expires soon"
-msgstr "Vence pronto"
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Uncategorized"
+msgstr "Sin categoría"
+
+msgid "Unknown"
+msgstr "Desconocido"
+
+msgid "Post #%d"
+msgstr "Entrada #%d"
+
+msgid "No Analytics Data Yet"
+msgstr "Aún no hay datos de analítica"
+
+msgid "Analytics data will appear here once posts expire. Set expiry dates on posts to see activity."
+msgstr "Los datos analíticos aparecerán aquí cuando las entradas caduquen. Establece fechas de caducidad en las entradas para ver la actividad."
+
+msgid "Date Range:"
+msgstr "Rango de fechas:"
+
+msgid "Last 7 Days"
+msgstr "Últimos 7 días"
+
+msgid "Last 30 Days"
+msgstr "Últimos 30 días"
+
+msgid "Last 90 Days"
+msgstr "Últimos 90 días"
+
+msgid "All Time"
+msgstr "Todo el tiempo"
+
+msgid "Apply"
+msgstr "Aplicar"
+
+msgid "Total Expired"
+msgstr "Total vencidos"
+
+msgid "This Month"
+msgstr "Este mes"
+
+msgid "This Week"
+msgstr "Esta semana"
+
+msgid "Avg Post Age"
+msgstr "Antigüedad promedio"
+
+msgid "days"
+msgstr "días"
+
+msgid "Success Rate"
+msgstr "Tasa de éxito"
+
+msgid "Expiry Trends"
+msgstr "Tendencias de vencimiento"
+
+msgid "Action Breakdown"
+msgstr "Desglose de acciones"
+
+msgid "Top Categories"
+msgstr "Principales categorías"
+
+msgid "Top Authors"
+msgstr "Principales autores"
+
+msgid "Recent Expiry Activity"
+msgstr "Actividad de vencimiento reciente"
+
+msgid "No expiry activity recorded yet."
+msgstr "Aún no se ha registrado actividad de vencimiento."
+
+msgid "Post"
+msgstr "Entrada"
+
+msgid "Action"
+msgstr "Acción"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "Age"
+msgstr "Antigüedad"
+
+msgid "Views"
+msgstr "Visitas"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Posts Expired"
+msgstr "Entradas vencidas"
+
+msgid "Expired Posts"
+msgstr "Entradas vencidas"
+
+msgid "Post Expiry"
+msgstr "Vencimiento de entrada"
+
+msgid "Set a date/time and action. Use the meta box below for redirect URL."
+msgstr "Establezca una fecha/hora y acción. Use la caja meta de abajo para la URL de redirección."
+
+msgid "Expiry date/time (local)"
+msgstr "Fecha/hora de caducidad (local)"
+
+msgid "Set expiry using default window"
+msgstr "Establecer vencimiento usando ventana predeterminada"
+
+msgid "Post Expiring Soon: %s"
+msgstr "Entrada vence pronto: %s"
+
+msgid "Change to Draft"
+msgstr "Cambiar a borrador"
+
+msgid "Change to Private"
+msgstr "Cambiar a privado"
+
+msgid "Move to Trash"
+msgstr "Mover a la papelera"
+
+msgid "Move to Category"
+msgstr "Mover a categoría"
+
+msgid "Set Redirect URL"
+msgstr "Establecer URL de redirección"
+
+msgid "Permanently Delete"
+msgstr "Eliminar permanentemente"
+
+msgid "Post Category"
+msgstr "Categoría de la entrada"
+
+msgid "Post Tag"
+msgstr "Etiqueta de la entrada"
+
+msgid "Post Author"
+msgstr "Autor de la entrada"
+
+msgid "Post Age (days)"
+msgstr "Antigüedad de la entrada (días)"
+
+msgid "Comment Count"
+msgstr "Número de comentarios"
+
+msgid "Post Views"
+msgstr "Visitas de la entrada"
+
+msgid "Custom Field"
+msgstr "Campo personalizado"
 
 msgid "You do not have permission to access this page."
 msgstr "No tiene permiso para acceder a esta página."
@@ -78,21 +221,6 @@ msgstr "Soporte"
 
 msgid "Settings saved."
 msgstr "Ajustes guardados."
-
-msgid "Move to Trash"
-msgstr "Mover a la papelera"
-
-msgid "Permanently Delete"
-msgstr "Eliminar permanentemente"
-
-msgid "Change to Draft"
-msgstr "Cambiar a borrador"
-
-msgid "Change to Private"
-msgstr "Cambiar a privado"
-
-msgid "Move to Category"
-msgstr "Mover a categoría"
 
 msgid "Redirect Only (keep published)"
 msgstr "Solo redirección (mantener publicado)"
@@ -128,7 +256,7 @@ msgid "Select a category"
 msgstr "Seleccionar una categoría"
 
 msgid "Posts will be moved to this category when expired. Only used when \"Move to Category\" is selected above."
-msgstr ""
+msgstr "Las entradas se moverán a esta categoría cuando venzan. Solo se usa cuando se selecciona «Mover a categoría» arriba."
 
 msgid "Redirect Settings"
 msgstr "Configuración de redirección"
@@ -169,9 +297,6 @@ msgstr "Enviar notificación estos días antes de que una entrada venza."
 msgid "Notify"
 msgstr "Notificar"
 
-msgid "Post Author"
-msgstr "Autor de la entrada"
-
 msgid "Site Admin"
 msgstr "Administrador del sitio"
 
@@ -200,7 +325,7 @@ msgid "Setting an Expiry Date"
 msgstr "Establecer una fecha de vencimiento"
 
 msgid "When editing a post or page, look for the \"Post Expiry\" box in the sidebar on the right. Enter the date and time when you want the post to expire."
-msgstr ""
+msgstr "Al editar una entrada o página, busque el cuadro «Vencimiento de entrada» en la barra lateral derecha. Introduzca la fecha y hora en que desea que la entrada venza."
 
 msgid "Expiry Actions"
 msgstr "Acciones de vencimiento"
@@ -244,9 +369,6 @@ msgstr "Las reglas inteligentes le permiten definir acciones automáticas basada
 msgid "Available conditions:"
 msgstr "Condiciones disponibles:"
 
-msgid "Category"
-msgstr "Categoría"
-
 msgid "Match posts in a specific category."
 msgstr "Coincide con entradas en una categoría específica."
 
@@ -268,14 +390,11 @@ msgstr "Antigüedad de la entrada"
 msgid "Match posts older than a specified number of days."
 msgstr "Coincide con entradas con más de un número especificado de días."
 
-msgid "Custom Field"
-msgstr "Campo personalizado"
-
 msgid "Match posts with a specific custom field value."
 msgstr "Coincide con entradas con un valor de campo personalizado específico."
 
 msgid "Example: \"If a post is in the News category, move it to draft when it expires\" or \"If a post is older than 90 days, delete it permanently.\""
-msgstr ""
+msgstr "Ejemplo: «Si una entrada está en la categoría Noticias, cambiarla a borrador cuando venza» o «Si una entrada tiene más de 90 días, eliminarla permanentemente»."
 
 msgid "SEO Handling"
 msgstr "Gestión SEO"
@@ -320,7 +439,7 @@ msgid "The Post Expiry metabox is not showing on my posts."
 msgstr "La metabox de vencimiento de entrada no se muestra en mis entradas."
 
 msgid "Check that \"Enable post expiry\" is ticked on the Settings tab."
-msgstr ""
+msgstr "Verifique que «Habilitar vencimiento de entradas» esté activado en la pestaña de ajustes."
 
 msgid "Check that the post type (e.g. Post, Page) is selected in the Post types list."
 msgstr "Verifique que el tipo de entrada (por ejemplo, Entrada, Página) esté seleccionado en la lista de tipos de entrada."
@@ -354,9 +473,6 @@ msgstr "Si tiene preguntas, encuentra errores o necesita ayuda con la configurac
 
 msgid "Get Support"
 msgstr "Obtener soporte"
-
-msgid "Post Expiry"
-msgstr "Vencimiento de entrada"
 
 msgid "Expiry Date"
 msgstr "Fecha de vencimiento"
@@ -424,20 +540,11 @@ msgstr "Condición"
 msgid "Value"
 msgstr "Valor"
 
-msgid "Action"
-msgstr "Acción"
-
 msgid "Delete this rule?"
 msgstr "¿Eliminar esta regla?"
 
-msgid "Delete"
-msgstr "Eliminar"
-
 msgid "Add New Rule"
 msgstr "Añadir nueva regla"
-
-msgid "Post Age (days)"
-msgstr "Antigüedad de la entrada (días)"
 
 msgid "Condition Value"
 msgstr "Valor de la condición"
@@ -445,14 +552,11 @@ msgstr "Valor de la condición"
 msgid "Category/tag slug, author login, days number, or field_name=value."
 msgstr "Slug de categoría/etiqueta, login de autor, número de días o nombre_campo=valor."
 
-msgid "Redirect"
-msgstr "Redirección"
-
 msgid "Action Value"
 msgstr "Valor de la acción"
 
 msgid "Category ID for \"Move to Category\", URL for \"Redirect\". Optional for other actions."
-msgstr ""
+msgstr "ID de categoría para «Mover a categoría», URL para «Redirección». Opcional para otras acciones."
 
 msgid "Lower number = higher priority."
 msgstr "Número más bajo = mayor prioridad."
@@ -469,120 +573,28 @@ msgstr "Acciones de vencimiento recientes (últimas 50 entradas)."
 msgid "No expiry actions recorded yet."
 msgstr "Aún no se han registrado acciones de vencimiento."
 
-msgid "Post"
-msgstr "Entrada"
+msgid "Every 5 minutes"
+msgstr "Cada 5 minutos"
 
-msgid "Date"
-msgstr "Fecha"
+msgid "Every 15 minutes"
+msgstr "Cada 15 minutos"
 
-msgid "Draft"
-msgstr "Borrador"
+msgid "No expiry set"
+msgstr "Sin vencimiento establecido"
 
-msgid "Private"
-msgstr "Privado"
+msgid "Expired"
+msgstr "Vencido"
 
-msgid "Trash"
-msgstr "Papelera"
+msgid "%d day remaining"
+msgid_plural "%d days remaining"
+msgstr[0] "%d día restante"
+msgstr[1] "%d días restantes"
 
-msgid "Uncategorized"
-msgstr "Sin categoría"
+msgid "%d hour remaining"
+msgid_plural "%d hours remaining"
+msgstr[0] "%d hora restante"
+msgstr[1] "%d horas restantes"
 
-msgid "Unknown"
-msgstr "Desconocido"
-
-msgid "Post #%d"
-msgstr "Entrada #%d"
-
-msgid "Date Range:"
-msgstr "Rango de fechas:"
-
-msgid "Last 7 Days"
-msgstr "Últimos 7 días"
-
-msgid "Last 30 Days"
-msgstr "Últimos 30 días"
-
-msgid "Last 90 Days"
-msgstr "Últimos 90 días"
-
-msgid "All Time"
-msgstr "Todo el tiempo"
-
-msgid "Apply"
-msgstr "Aplicar"
-
-msgid "Total Expired"
-msgstr "Total vencidos"
-
-msgid "This Month"
-msgstr "Este mes"
-
-msgid "This Week"
-msgstr "Esta semana"
-
-msgid "Avg Post Age"
-msgstr "Antigüedad promedio"
-
-msgid "days"
-msgstr "días"
-
-msgid "Success Rate"
-msgstr "Tasa de éxito"
-
-msgid "Expiry Trends"
-msgstr "Tendencias de vencimiento"
-
-msgid "Posts Expired"
-msgstr "Entradas vencidas"
-
-msgid "Action Breakdown"
-msgstr "Desglose de acciones"
-
-msgid "Top Categories"
-msgstr "Principales categorías"
-
-msgid "Expired Posts"
-msgstr "Entradas vencidas"
-
-msgid "Top Authors"
-msgstr "Principales autores"
-
-msgid "Recent Expiry Activity"
-msgstr "Actividad de vencimiento reciente"
-
-msgid "No expiry activity recorded yet."
-msgstr "Aún no se ha registrado actividad de vencimiento."
-
-msgid "Status"
-msgstr "Estado"
-
-msgid "Age"
-msgstr "Antigüedad"
-
-msgid "Views"
-msgstr "Visitas"
-
-msgid "Set Redirect URL"
-msgstr "Establecer URL de redirección"
-
-msgid "Post Category"
-msgstr "Categoría de la entrada"
-
-msgid "Post Tag"
-msgstr "Etiqueta de la entrada"
-
-msgid "Comment Count"
-msgstr "Número de comentarios"
-
-msgid "Post Views"
-msgstr "Visitas de la entrada"
-
-msgid "Set a date/time and action. Use the meta box below for redirect URL."
-msgstr "Establezca una fecha/hora y acción. Use la caja meta de abajo para la URL de redirección."
-
-msgid "Set expiry using default window"
-msgstr "Establecer vencimiento usando ventana predeterminada"
-
-msgid "Post Expiring Soon: %s"
-msgstr "Entrada vence pronto: %s"
+msgid "Expires soon"
+msgstr "Vence pronto"
 

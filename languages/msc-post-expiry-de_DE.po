@@ -2,10 +2,10 @@
 # This file is distributed under the GPL-2.0+ license.
 msgid ""
 msgstr ""
-"Project-Id-Version: MSC Post Expiry 1.3.0\n"
+"Project-Id-Version: MSC Post Expiry 1.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/msc-post-expiry\n"
-"POT-Creation-Date: 2026-05-03T12:00:00+00:00\n"
-"PO-Revision-Date: 2026-05-03 12:00:00+00:00\n"
+"POT-Creation-Date: 2026-05-29T12:09:24+00:00\n"
+"PO-Revision-Date: 2026-05-29 12:09:24+00:00\n"
 "Last-Translator: Anomalous Developers <dev@anomalous.co.za>\n"
 "Language-Team: German (Germany) <LL@li.org>\n"
 "Language: de_DE\n"
@@ -27,30 +27,173 @@ msgstr "Beiträge und Seiten automatisch an einem geplanten Datum ablaufen lasse
 msgid "Anomalous Developers"
 msgstr "Anomalous Developers"
 
-msgid "Every 5 minutes"
-msgstr "Alle 5 Minuten"
+msgid "https://anomalous.co.za"
+msgstr "https://anomalous.co.za"
 
-msgid "Every 15 minutes"
-msgstr "Alle 15 Minuten"
+msgid "Draft"
+msgstr "Entwurf"
 
-msgid "No expiry set"
-msgstr "Kein Ablauf festgelegt"
+msgid "Private"
+msgstr "Privat"
 
-msgid "Expired"
-msgstr "Abgelaufen"
+msgid "Trash"
+msgstr "Papierkorb"
 
-msgid "%d day remaining"
-msgid_plural "%d days remaining"
-msgstr[0] "%d Tag verbleibend"
-msgstr[1] "%d Tage verbleibend"
+msgid "Category"
+msgstr "Kategorie"
 
-msgid "%d hour remaining"
-msgid_plural "%d hours remaining"
-msgstr[0] "%d Stunde verbleibend"
-msgstr[1] "%d Stunden verbleibend"
+msgid "Redirect"
+msgstr "Weiterleitung"
 
-msgid "Expires soon"
-msgstr "Läuft bald ab"
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Uncategorized"
+msgstr "Unkategorisiert"
+
+msgid "Unknown"
+msgstr "Unbekannt"
+
+msgid "Post #%d"
+msgstr "Beitrag #%d"
+
+msgid "No Analytics Data Yet"
+msgstr "Noch keine Analysedaten"
+
+msgid "Analytics data will appear here once posts expire. Set expiry dates on posts to see activity."
+msgstr "Analysedaten erscheinen hier, sobald Beiträge ablaufen. Legen Sie Ablaufdaten für Beiträge fest, um Aktivität zu sehen."
+
+msgid "Date Range:"
+msgstr "Zeitraum:"
+
+msgid "Last 7 Days"
+msgstr "Letzte 7 Tage"
+
+msgid "Last 30 Days"
+msgstr "Letzte 30 Tage"
+
+msgid "Last 90 Days"
+msgstr "Letzte 90 Tage"
+
+msgid "All Time"
+msgstr "Gesamte Zeit"
+
+msgid "Apply"
+msgstr "Anwenden"
+
+msgid "Total Expired"
+msgstr "Insgesamt abgelaufen"
+
+msgid "This Month"
+msgstr "Diesen Monat"
+
+msgid "This Week"
+msgstr "Diese Woche"
+
+msgid "Avg Post Age"
+msgstr "Durchschn. Beitragsalter"
+
+msgid "days"
+msgstr "Tage"
+
+msgid "Success Rate"
+msgstr "Erfolgsrate"
+
+msgid "Expiry Trends"
+msgstr "Ablauftrends"
+
+msgid "Action Breakdown"
+msgstr "Aktionsübersicht"
+
+msgid "Top Categories"
+msgstr "Top-Kategorien"
+
+msgid "Top Authors"
+msgstr "Top-Autoren"
+
+msgid "Recent Expiry Activity"
+msgstr "Letzte Ablaufaktivität"
+
+msgid "No expiry activity recorded yet."
+msgstr "Noch keine Ablaufaktivität aufgezeichnet."
+
+msgid "Post"
+msgstr "Beitrag"
+
+msgid "Action"
+msgstr "Aktion"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Age"
+msgstr "Alter"
+
+msgid "Views"
+msgstr "Aufrufe"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Posts Expired"
+msgstr "Abgelaufene Beiträge"
+
+msgid "Expired Posts"
+msgstr "Abgelaufene Beiträge"
+
+msgid "Post Expiry"
+msgstr "Beitragsablauf"
+
+msgid "Set a date/time and action. Use the meta box below for redirect URL."
+msgstr "Datum/Uhrzeit und Aktion festlegen. Verwenden Sie die Metabox unten für die Weiterleitungs-URL."
+
+msgid "Expiry date/time (local)"
+msgstr "Ablaufdatum/-uhrzeit (lokal)"
+
+msgid "Set expiry using default window"
+msgstr "Ablauf mit Standardzeitraum festlegen"
+
+msgid "Post Expiring Soon: %s"
+msgstr "Beitrag läuft bald ab: %s"
+
+msgid "Change to Draft"
+msgstr "Zu Entwurf ändern"
+
+msgid "Change to Private"
+msgstr "Zu Privat ändern"
+
+msgid "Move to Trash"
+msgstr "In den Papierkorb verschieben"
+
+msgid "Move to Category"
+msgstr "In Kategorie verschieben"
+
+msgid "Set Redirect URL"
+msgstr "Weiterleitungs-URL festlegen"
+
+msgid "Permanently Delete"
+msgstr "Endgültig löschen"
+
+msgid "Post Category"
+msgstr "Beitragskategorie"
+
+msgid "Post Tag"
+msgstr "Beitragsschlagwort"
+
+msgid "Post Author"
+msgstr "Beitragsautor"
+
+msgid "Post Age (days)"
+msgstr "Beitragsalter (Tage)"
+
+msgid "Comment Count"
+msgstr "Kommentaranzahl"
+
+msgid "Post Views"
+msgstr "Beitragsaufrufe"
+
+msgid "Custom Field"
+msgstr "Benutzerdefiniertes Feld"
 
 msgid "You do not have permission to access this page."
 msgstr "Sie haben keine Berechtigung, auf diese Seite zuzugreifen."
@@ -78,21 +221,6 @@ msgstr "Support"
 
 msgid "Settings saved."
 msgstr "Einstellungen gespeichert."
-
-msgid "Move to Trash"
-msgstr "In den Papierkorb verschieben"
-
-msgid "Permanently Delete"
-msgstr "Endgültig löschen"
-
-msgid "Change to Draft"
-msgstr "Zu Entwurf ändern"
-
-msgid "Change to Private"
-msgstr "Zu Privat ändern"
-
-msgid "Move to Category"
-msgstr "In Kategorie verschieben"
 
 msgid "Redirect Only (keep published)"
 msgstr "Nur Weiterleitung (veröffentlicht lassen)"
@@ -128,7 +256,7 @@ msgid "Select a category"
 msgstr "Kategorie auswählen"
 
 msgid "Posts will be moved to this category when expired. Only used when \"Move to Category\" is selected above."
-msgstr ""
+msgstr "Beiträge werden bei Ablauf in diese Kategorie verschoben. Wird nur verwendet, wenn oben „In Kategorie verschieben\" ausgewählt ist."
 
 msgid "Redirect Settings"
 msgstr "Weiterleitungseinstellungen"
@@ -169,9 +297,6 @@ msgstr "Benachrichtigung so viele Tage vor Ablauf eines Beitrags senden."
 msgid "Notify"
 msgstr "Benachrichtigen"
 
-msgid "Post Author"
-msgstr "Beitragsautor"
-
 msgid "Site Admin"
 msgstr "Website-Administrator"
 
@@ -200,7 +325,7 @@ msgid "Setting an Expiry Date"
 msgstr "Ein Ablaufdatum festlegen"
 
 msgid "When editing a post or page, look for the \"Post Expiry\" box in the sidebar on the right. Enter the date and time when you want the post to expire."
-msgstr ""
+msgstr "Suchen Sie beim Bearbeiten eines Beitrags oder einer Seite nach der Box „Beitragsablauf\" in der Seitenleiste rechts. Geben Sie das Datum und die Uhrzeit ein, zu der der Beitrag ablaufen soll."
 
 msgid "Expiry Actions"
 msgstr "Ablaufaktionen"
@@ -244,9 +369,6 @@ msgstr "Intelligente Regeln ermöglichen es Ihnen, automatische Aktionen basiere
 msgid "Available conditions:"
 msgstr "Verfügbare Bedingungen:"
 
-msgid "Category"
-msgstr "Kategorie"
-
 msgid "Match posts in a specific category."
 msgstr "Beiträge in einer bestimmten Kategorie abgleichen."
 
@@ -268,14 +390,11 @@ msgstr "Beitragsalter"
 msgid "Match posts older than a specified number of days."
 msgstr "Beiträge abgleichen, die älter als eine bestimmte Anzahl von Tagen sind."
 
-msgid "Custom Field"
-msgstr "Benutzerdefiniertes Feld"
-
 msgid "Match posts with a specific custom field value."
 msgstr "Beiträge mit einem bestimmten benutzerdefinierten Feldwert abgleichen."
 
 msgid "Example: \"If a post is in the News category, move it to draft when it expires\" or \"If a post is older than 90 days, delete it permanently.\""
-msgstr ""
+msgstr "Beispiel: „Wenn ein Beitrag in der Kategorie Nachrichten ist, in Entwurf verschieben, wenn er abläuft\" oder „Wenn ein Beitrag älter als 90 Tage ist, endgültig löschen.\""
 
 msgid "SEO Handling"
 msgstr "SEO-Verwaltung"
@@ -320,7 +439,7 @@ msgid "The Post Expiry metabox is not showing on my posts."
 msgstr "Die Beitragsablauf-Metabox wird bei meinen Beiträgen nicht angezeigt."
 
 msgid "Check that \"Enable post expiry\" is ticked on the Settings tab."
-msgstr ""
+msgstr "Überprüfen Sie, ob „Beitragsablauf aktivieren\" im Einstellungen-Tab aktiviert ist."
 
 msgid "Check that the post type (e.g. Post, Page) is selected in the Post types list."
 msgstr "Überprüfen Sie, ob der Beitragstyp (z. B. Beitrag, Seite) in der Beitragstypenliste ausgewählt ist."
@@ -354,9 +473,6 @@ msgstr "Wenn Sie Fragen haben, Fehler finden oder Hilfe bei der Einrichtung ben�
 
 msgid "Get Support"
 msgstr "Support erhalten"
-
-msgid "Post Expiry"
-msgstr "Beitragsablauf"
 
 msgid "Expiry Date"
 msgstr "Ablaufdatum"
@@ -424,20 +540,11 @@ msgstr "Bedingung"
 msgid "Value"
 msgstr "Wert"
 
-msgid "Action"
-msgstr "Aktion"
-
 msgid "Delete this rule?"
 msgstr "Diese Regel löschen?"
 
-msgid "Delete"
-msgstr "Löschen"
-
 msgid "Add New Rule"
 msgstr "Neue Regel hinzufügen"
-
-msgid "Post Age (days)"
-msgstr "Beitragsalter (Tage)"
 
 msgid "Condition Value"
 msgstr "Bedingungswert"
@@ -445,14 +552,11 @@ msgstr "Bedingungswert"
 msgid "Category/tag slug, author login, days number, or field_name=value."
 msgstr "Kategorie-/Schlagwort-Slug, Autoren-Login, Tagesanzahl oder feldname=wert."
 
-msgid "Redirect"
-msgstr "Weiterleitung"
-
 msgid "Action Value"
 msgstr "Aktionswert"
 
 msgid "Category ID for \"Move to Category\", URL for \"Redirect\". Optional for other actions."
-msgstr ""
+msgstr "Kategorie-ID für „In Kategorie verschieben\", URL für „Weiterleitung\". Optional für andere Aktionen."
 
 msgid "Lower number = higher priority."
 msgstr "Niedrigere Zahl = höhere Priorität."
@@ -469,120 +573,28 @@ msgstr "Letzte Ablaufaktionen (letzte 50 Einträge)."
 msgid "No expiry actions recorded yet."
 msgstr "Noch keine Ablaufaktionen aufgezeichnet."
 
-msgid "Post"
-msgstr "Beitrag"
+msgid "Every 5 minutes"
+msgstr "Alle 5 Minuten"
 
-msgid "Date"
-msgstr "Datum"
+msgid "Every 15 minutes"
+msgstr "Alle 15 Minuten"
 
-msgid "Draft"
-msgstr "Entwurf"
+msgid "No expiry set"
+msgstr "Kein Ablauf festgelegt"
 
-msgid "Private"
-msgstr "Privat"
+msgid "Expired"
+msgstr "Abgelaufen"
 
-msgid "Trash"
-msgstr "Papierkorb"
+msgid "%d day remaining"
+msgid_plural "%d days remaining"
+msgstr[0] "%d Tag verbleibend"
+msgstr[1] "%d Tage verbleibend"
 
-msgid "Uncategorized"
-msgstr "Unkategorisiert"
+msgid "%d hour remaining"
+msgid_plural "%d hours remaining"
+msgstr[0] "%d Stunde verbleibend"
+msgstr[1] "%d Stunden verbleibend"
 
-msgid "Unknown"
-msgstr "Unbekannt"
-
-msgid "Post #%d"
-msgstr "Beitrag #%d"
-
-msgid "Date Range:"
-msgstr "Zeitraum:"
-
-msgid "Last 7 Days"
-msgstr "Letzte 7 Tage"
-
-msgid "Last 30 Days"
-msgstr "Letzte 30 Tage"
-
-msgid "Last 90 Days"
-msgstr "Letzte 90 Tage"
-
-msgid "All Time"
-msgstr "Gesamte Zeit"
-
-msgid "Apply"
-msgstr "Anwenden"
-
-msgid "Total Expired"
-msgstr "Insgesamt abgelaufen"
-
-msgid "This Month"
-msgstr "Diesen Monat"
-
-msgid "This Week"
-msgstr "Diese Woche"
-
-msgid "Avg Post Age"
-msgstr "Durchschn. Beitragsalter"
-
-msgid "days"
-msgstr "Tage"
-
-msgid "Success Rate"
-msgstr "Erfolgsrate"
-
-msgid "Expiry Trends"
-msgstr "Ablauftrends"
-
-msgid "Posts Expired"
-msgstr "Abgelaufene Beiträge"
-
-msgid "Action Breakdown"
-msgstr "Aktionsübersicht"
-
-msgid "Top Categories"
-msgstr "Top-Kategorien"
-
-msgid "Expired Posts"
-msgstr "Abgelaufene Beiträge"
-
-msgid "Top Authors"
-msgstr "Top-Autoren"
-
-msgid "Recent Expiry Activity"
-msgstr "Letzte Ablaufaktivität"
-
-msgid "No expiry activity recorded yet."
-msgstr "Noch keine Ablaufaktivität aufgezeichnet."
-
-msgid "Status"
-msgstr "Status"
-
-msgid "Age"
-msgstr "Alter"
-
-msgid "Views"
-msgstr "Aufrufe"
-
-msgid "Set Redirect URL"
-msgstr "Weiterleitungs-URL festlegen"
-
-msgid "Post Category"
-msgstr "Beitragskategorie"
-
-msgid "Post Tag"
-msgstr "Beitragsschlagwort"
-
-msgid "Comment Count"
-msgstr "Kommentaranzahl"
-
-msgid "Post Views"
-msgstr "Beitragsaufrufe"
-
-msgid "Set a date/time and action. Use the meta box below for redirect URL."
-msgstr "Datum/Uhrzeit und Aktion festlegen. Verwenden Sie die Metabox unten für die Weiterleitungs-URL."
-
-msgid "Set expiry using default window"
-msgstr "Ablauf mit Standardzeitraum festlegen"
-
-msgid "Post Expiring Soon: %s"
-msgstr "Beitrag läuft bald ab: %s"
+msgid "Expires soon"
+msgstr "Läuft bald ab"
 

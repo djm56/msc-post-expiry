@@ -13,9 +13,9 @@ require_once dirname( __DIR__ ) . '/includes/class-mscpe-migrations.php';
 require_once dirname( __DIR__ ) . '/includes/class-mscpe-seo.php';
 require_once dirname( __DIR__ ) . '/includes/class-mscpe-rules.php';
 require_once dirname( __DIR__ ) . '/includes/class-mscpe-analytics.php';
-require_once dirname( __DIR__ ) . '/includes/class-msc-post-expiry-module.php';
-require_once dirname( __DIR__ ) . '/includes/class-msc-post-expiry-settings.php';
-require_once dirname( __DIR__ ) . '/includes/class-msc-post-expiry.php';
+require_once dirname( __DIR__ ) . '/includes/class-mscpe-module.php';
+require_once dirname( __DIR__ ) . '/includes/class-mscpe-settings.php';
+require_once dirname( __DIR__ ) . '/includes/class-mscpe-plugin.php';
 
 use MSCPE\Module;
 use MSCPE\Plugin;
@@ -118,7 +118,7 @@ class Test_Module extends MSCPE_Test_Case {
 	 * Test module does NOT reference workflows in its class.
 	 */
 	public function test_no_workflow_reference_in_source() {
-		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-msc-post-expiry-module.php' );
+		$source = file_get_contents( dirname( __DIR__ ) . '/includes/class-mscpe-module.php' );
 		$this->assertStringNotContainsString( 'get_workflows', $source );
 		$this->assertStringNotContainsString( 'workflow_id', $source );
 	}

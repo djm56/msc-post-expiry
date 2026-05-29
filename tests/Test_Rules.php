@@ -37,9 +37,9 @@ class Test_Rules extends MSCPE_Test_Case {
 		require_once dirname( __DIR__ ) . '/includes/class-mscpe-migrations.php';
 		require_once dirname( __DIR__ ) . '/includes/class-mscpe-seo.php';
 		require_once dirname( __DIR__ ) . '/includes/class-mscpe-analytics.php';
-		require_once dirname( __DIR__ ) . '/includes/class-msc-post-expiry-module.php';
-		require_once dirname( __DIR__ ) . '/includes/class-msc-post-expiry-settings.php';
-		require_once dirname( __DIR__ ) . '/includes/class-msc-post-expiry.php';
+		require_once dirname( __DIR__ ) . '/includes/class-mscpe-module.php';
+		require_once dirname( __DIR__ ) . '/includes/class-mscpe-settings.php';
+		require_once dirname( __DIR__ ) . '/includes/class-mscpe-plugin.php';
 
 		$this->rules = new Rules( Plugin::instance() );
 	}

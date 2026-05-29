@@ -2,10 +2,10 @@
 # This file is distributed under the GPL-2.0+ license.
 msgid ""
 msgstr ""
-"Project-Id-Version: MSC Post Expiry 1.3.0\n"
+"Project-Id-Version: MSC Post Expiry 1.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/msc-post-expiry\n"
-"POT-Creation-Date: 2026-05-03T12:00:00+00:00\n"
-"PO-Revision-Date: 2026-05-03 12:00:00+00:00\n"
+"POT-Creation-Date: 2026-05-29T12:09:24+00:00\n"
+"PO-Revision-Date: 2026-05-29 12:09:24+00:00\n"
 "Last-Translator: Anomalous Developers <dev@anomalous.co.za>\n"
 "Language-Team: Japanese <LL@li.org>\n"
 "Language: ja\n"
@@ -27,28 +27,173 @@ msgstr "投稿とページを予定日に自動的に期限切れにします。
 msgid "Anomalous Developers"
 msgstr "Anomalous Developers"
 
-msgid "Every 5 minutes"
-msgstr "5分ごと"
+msgid "https://anomalous.co.za"
+msgstr "https://anomalous.co.za"
 
-msgid "Every 15 minutes"
-msgstr "15分ごと"
+msgid "Draft"
+msgstr "下書き"
 
-msgid "No expiry set"
-msgstr "期限切れ未設定"
+msgid "Private"
+msgstr "非公開"
 
-msgid "Expired"
-msgstr "期限切れ"
+msgid "Trash"
+msgstr "ゴミ箱"
 
-msgid "%d day remaining"
-msgid_plural "%d days remaining"
-msgstr[0] "残り%d日"
+msgid "Category"
+msgstr "カテゴリー"
 
-msgid "%d hour remaining"
-msgid_plural "%d hours remaining"
-msgstr[0] "残り%d時間"
+msgid "Redirect"
+msgstr "リダイレクト"
 
-msgid "Expires soon"
-msgstr "まもなく期限切れ"
+msgid "Delete"
+msgstr "削除"
+
+msgid "Uncategorized"
+msgstr "未分類"
+
+msgid "Unknown"
+msgstr "不明"
+
+msgid "Post #%d"
+msgstr "投稿 #%d"
+
+msgid "No Analytics Data Yet"
+msgstr "まだ解析データはありません"
+
+msgid "Analytics data will appear here once posts expire. Set expiry dates on posts to see activity."
+msgstr "投稿が期限切れになると、ここに解析データが表示されます。投稿に有効期限を設定してアクティビティを確認してください。"
+
+msgid "Date Range:"
+msgstr "期間:"
+
+msgid "Last 7 Days"
+msgstr "過去7日間"
+
+msgid "Last 30 Days"
+msgstr "過去30日間"
+
+msgid "Last 90 Days"
+msgstr "過去90日間"
+
+msgid "All Time"
+msgstr "全期間"
+
+msgid "Apply"
+msgstr "適用"
+
+msgid "Total Expired"
+msgstr "合計期限切れ"
+
+msgid "This Month"
+msgstr "今月"
+
+msgid "This Week"
+msgstr "今週"
+
+msgid "Avg Post Age"
+msgstr "平均投稿年齢"
+
+msgid "days"
+msgstr "日"
+
+msgid "Success Rate"
+msgstr "成功率"
+
+msgid "Expiry Trends"
+msgstr "有効期限トレンド"
+
+msgid "Action Breakdown"
+msgstr "アクション内訳"
+
+msgid "Top Categories"
+msgstr "トップカテゴリー"
+
+msgid "Top Authors"
+msgstr "トップ著者"
+
+msgid "Recent Expiry Activity"
+msgstr "最近の有効期限アクティビティ"
+
+msgid "No expiry activity recorded yet."
+msgstr "有効期限アクティビティはまだ記録されていません。"
+
+msgid "Post"
+msgstr "投稿"
+
+msgid "Action"
+msgstr "アクション"
+
+msgid "Status"
+msgstr "ステータス"
+
+msgid "Age"
+msgstr "年齢"
+
+msgid "Views"
+msgstr "閲覧数"
+
+msgid "Date"
+msgstr "日付"
+
+msgid "Posts Expired"
+msgstr "期限切れの投稿"
+
+msgid "Expired Posts"
+msgstr "期限切れの投稿"
+
+msgid "Post Expiry"
+msgstr "投稿期限切れ"
+
+msgid "Set a date/time and action. Use the meta box below for redirect URL."
+msgstr "日時とアクションを設定してください。リダイレクトURLにはメタボックスを使用してください。"
+
+msgid "Expiry date/time (local)"
+msgstr "有効期限の日付/時刻（ローカル）"
+
+msgid "Set expiry using default window"
+msgstr "デフォルトウィンドウを使用して有効期限を設定"
+
+msgid "Post Expiring Soon: %s"
+msgstr "投稿がまもなく期限切れ: %s"
+
+msgid "Change to Draft"
+msgstr "下書きに変更"
+
+msgid "Change to Private"
+msgstr "非公開に変更"
+
+msgid "Move to Trash"
+msgstr "ゴミ箱に移動"
+
+msgid "Move to Category"
+msgstr "カテゴリーに移動"
+
+msgid "Set Redirect URL"
+msgstr "リダイレクトURLを設定"
+
+msgid "Permanently Delete"
+msgstr "完全に削除"
+
+msgid "Post Category"
+msgstr "投稿カテゴリー"
+
+msgid "Post Tag"
+msgstr "投稿タグ"
+
+msgid "Post Author"
+msgstr "投稿者"
+
+msgid "Post Age (days)"
+msgstr "投稿の経過日数"
+
+msgid "Comment Count"
+msgstr "コメント数"
+
+msgid "Post Views"
+msgstr "投稿閲覧数"
+
+msgid "Custom Field"
+msgstr "カスタムフィールド"
 
 msgid "You do not have permission to access this page."
 msgstr "このページにアクセスする権限がありません。"
@@ -76,21 +221,6 @@ msgstr "サポート"
 
 msgid "Settings saved."
 msgstr "設定を保存しました。"
-
-msgid "Move to Trash"
-msgstr "ゴミ箱に移動"
-
-msgid "Permanently Delete"
-msgstr "完全に削除"
-
-msgid "Change to Draft"
-msgstr "下書きに変更"
-
-msgid "Change to Private"
-msgstr "非公開に変更"
-
-msgid "Move to Category"
-msgstr "カテゴリーに移動"
 
 msgid "Redirect Only (keep published)"
 msgstr "リダイレクトのみ（公開を維持）"
@@ -126,7 +256,7 @@ msgid "Select a category"
 msgstr "カテゴリーを選択"
 
 msgid "Posts will be moved to this category when expired. Only used when \"Move to Category\" is selected above."
-msgstr ""
+msgstr "期限切れになると投稿はこのカテゴリーに移動されます。上で「カテゴリーに移動」が選択されている場合のみ使用されます。"
 
 msgid "Redirect Settings"
 msgstr "リダイレクト設定"
@@ -167,9 +297,6 @@ msgstr "投稿が期限切れになるこの日数前に通知を送信します
 msgid "Notify"
 msgstr "通知先"
 
-msgid "Post Author"
-msgstr "投稿者"
-
 msgid "Site Admin"
 msgstr "サイト管理者"
 
@@ -198,7 +325,7 @@ msgid "Setting an Expiry Date"
 msgstr "有効期限の設定"
 
 msgid "When editing a post or page, look for the \"Post Expiry\" box in the sidebar on the right. Enter the date and time when you want the post to expire."
-msgstr ""
+msgstr "投稿やページを編集する際、右側のサイドバーにある「投稿期限切れ」ボックスを探してください。投稿を期限切れにしたい日時を入力してください。"
 
 msgid "Expiry Actions"
 msgstr "期限切れアクション"
@@ -242,9 +369,6 @@ msgstr "スマートルールでは、投稿のプロパティに基づいて自
 msgid "Available conditions:"
 msgstr "利用可能な条件:"
 
-msgid "Category"
-msgstr "カテゴリー"
-
 msgid "Match posts in a specific category."
 msgstr "特定のカテゴリーの投稿にマッチします。"
 
@@ -266,14 +390,11 @@ msgstr "投稿の経過日数"
 msgid "Match posts older than a specified number of days."
 msgstr "指定された日数より古い投稿にマッチします。"
 
-msgid "Custom Field"
-msgstr "カスタムフィールド"
-
 msgid "Match posts with a specific custom field value."
 msgstr "特定のカスタムフィールド値を持つ投稿にマッチします。"
 
 msgid "Example: \"If a post is in the News category, move it to draft when it expires\" or \"If a post is older than 90 days, delete it permanently.\""
-msgstr ""
+msgstr "例：「投稿がニュースカテゴリーにある場合、期限切れになったら下書きに移動する」または「投稿が90日以上経過している場合、完全に削除する」。"
 
 msgid "SEO Handling"
 msgstr "SEO管理"
@@ -318,7 +439,7 @@ msgid "The Post Expiry metabox is not showing on my posts."
 msgstr "投稿期限切れのメタボックスが投稿に表示されません。"
 
 msgid "Check that \"Enable post expiry\" is ticked on the Settings tab."
-msgstr ""
+msgstr "設定タブで「投稿の期限切れを有効にする」がチェックされていることを確認してください。"
 
 msgid "Check that the post type (e.g. Post, Page) is selected in the Post types list."
 msgstr "投稿タイプ（例：投稿、固定ページ）が投稿タイプリストで選択されていることを確認してください。"
@@ -352,9 +473,6 @@ msgstr "ご質問がある場合、バグを見つけた場合、またはセッ
 
 msgid "Get Support"
 msgstr "サポートを受ける"
-
-msgid "Post Expiry"
-msgstr "投稿期限切れ"
 
 msgid "Expiry Date"
 msgstr "有効期限日"
@@ -422,20 +540,11 @@ msgstr "条件"
 msgid "Value"
 msgstr "値"
 
-msgid "Action"
-msgstr "アクション"
-
 msgid "Delete this rule?"
 msgstr "このルールを削除しますか？"
 
-msgid "Delete"
-msgstr "削除"
-
 msgid "Add New Rule"
 msgstr "新しいルールを追加"
-
-msgid "Post Age (days)"
-msgstr "投稿の経過日数"
 
 msgid "Condition Value"
 msgstr "条件の値"
@@ -443,14 +552,11 @@ msgstr "条件の値"
 msgid "Category/tag slug, author login, days number, or field_name=value."
 msgstr "カテゴリー/タグスラッグ、著者ログイン、日数、またはフィールド名=値。"
 
-msgid "Redirect"
-msgstr "リダイレクト"
-
 msgid "Action Value"
 msgstr "アクションの値"
 
 msgid "Category ID for \"Move to Category\", URL for \"Redirect\". Optional for other actions."
-msgstr ""
+msgstr "「カテゴリーに移動」のカテゴリーID、「リダイレクト」のURL。他のアクションではオプションです。"
 
 msgid "Lower number = higher priority."
 msgstr "小さい数字 = 高い優先度。"
@@ -467,120 +573,26 @@ msgstr "最近の有効期限アクション（最新50件）。"
 msgid "No expiry actions recorded yet."
 msgstr "有効期限アクションはまだ記録されていません。"
 
-msgid "Post"
-msgstr "投稿"
+msgid "Every 5 minutes"
+msgstr "5分ごと"
 
-msgid "Date"
-msgstr "日付"
+msgid "Every 15 minutes"
+msgstr "15分ごと"
 
-msgid "Draft"
-msgstr "下書き"
+msgid "No expiry set"
+msgstr "期限切れ未設定"
 
-msgid "Private"
-msgstr "非公開"
+msgid "Expired"
+msgstr "期限切れ"
 
-msgid "Trash"
-msgstr "ゴミ箱"
+msgid "%d day remaining"
+msgid_plural "%d days remaining"
+msgstr[0] "残り%d日"
 
-msgid "Uncategorized"
-msgstr "未分類"
+msgid "%d hour remaining"
+msgid_plural "%d hours remaining"
+msgstr[0] "残り%d時間"
 
-msgid "Unknown"
-msgstr "不明"
-
-msgid "Post #%d"
-msgstr "投稿 #%d"
-
-msgid "Date Range:"
-msgstr "期間:"
-
-msgid "Last 7 Days"
-msgstr "過去7日間"
-
-msgid "Last 30 Days"
-msgstr "過去30日間"
-
-msgid "Last 90 Days"
-msgstr "過去90日間"
-
-msgid "All Time"
-msgstr "全期間"
-
-msgid "Apply"
-msgstr "適用"
-
-msgid "Total Expired"
-msgstr "合計期限切れ"
-
-msgid "This Month"
-msgstr "今月"
-
-msgid "This Week"
-msgstr "今週"
-
-msgid "Avg Post Age"
-msgstr "平均投稿年齢"
-
-msgid "days"
-msgstr "日"
-
-msgid "Success Rate"
-msgstr "成功率"
-
-msgid "Expiry Trends"
-msgstr "有効期限トレンド"
-
-msgid "Posts Expired"
-msgstr "期限切れの投稿"
-
-msgid "Action Breakdown"
-msgstr "アクション内訳"
-
-msgid "Top Categories"
-msgstr "トップカテゴリー"
-
-msgid "Expired Posts"
-msgstr "期限切れの投稿"
-
-msgid "Top Authors"
-msgstr "トップ著者"
-
-msgid "Recent Expiry Activity"
-msgstr "最近の有効期限アクティビティ"
-
-msgid "No expiry activity recorded yet."
-msgstr "有効期限アクティビティはまだ記録されていません。"
-
-msgid "Status"
-msgstr "ステータス"
-
-msgid "Age"
-msgstr "年齢"
-
-msgid "Views"
-msgstr "閲覧数"
-
-msgid "Set Redirect URL"
-msgstr "リダイレクトURLを設定"
-
-msgid "Post Category"
-msgstr "投稿カテゴリー"
-
-msgid "Post Tag"
-msgstr "投稿タグ"
-
-msgid "Comment Count"
-msgstr "コメント数"
-
-msgid "Post Views"
-msgstr "投稿閲覧数"
-
-msgid "Set a date/time and action. Use the meta box below for redirect URL."
-msgstr "日時とアクションを設定してください。リダイレクトURLにはメタボックスを使用してください。"
-
-msgid "Set expiry using default window"
-msgstr "デフォルトウィンドウを使用して有効期限を設定"
-
-msgid "Post Expiring Soon: %s"
-msgstr "投稿がまもなく期限切れ: %s"
+msgid "Expires soon"
+msgstr "まもなく期限切れ"
 

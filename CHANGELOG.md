@@ -2,6 +2,13 @@
 
 All notable changes to MSC Post Expiry are documented in this file.
 
+## [1.4.0] - 2026-05-28
+
+### Changed
+
+- Renamed class files for consistent MSCPE prefix: `class-msc-post-expiry.php` → `class-mscpe-plugin.php`, `class-msc-post-expiry-settings.php` → `class-mscpe-settings.php`, `class-msc-post-expiry-module.php` → `class-mscpe-module.php`
+- Bumped plugin version to 1.4.0
+
 ## [1.3.0] - 2026-05-03
 
 ### Added

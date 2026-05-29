@@ -4,7 +4,7 @@ Tags: post-expiry,content,scheduling,automation
 Requires at least: 5.9
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,10 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 
 == Changelog ==
 
+= 1.4.0 =
+* Renamed class files for consistent MSCPE prefix (class-mscpe-plugin.php, class-mscpe-settings.php, class-mscpe-module.php)
+* Bumped version to 1.4.0
+
 = 1.3.0 =
 * Complete translations for all 189 strings across 12 locales (de_DE, de_CH, es_ES, es_MX, fr_FR, fr_CA, it_IT, ja, nl_NL, nl_BE, pt_BR, pt_PT)
 * Regenerated POT template with all current translatable strings
@@ -158,6 +162,9 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 * Full internationalization support
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+Class files renamed for consistent naming. No functional changes — safe update.
 
 = 1.3.0 =
 Complete translation update: all 189 translatable strings now translated across 12 locales. POT template regenerated.

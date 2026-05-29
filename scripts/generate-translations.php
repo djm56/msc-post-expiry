@@ -33,22 +33,22 @@ while ( $i < $count ) {
 
 	// Look for msgid lines (skip the header empty msgid).
 	if ( preg_match( '/^msgid "(.+)"$/', $line, $m ) ) {
-		$msgid = $m[1];
+		$msgid = stripcslashes( $m[1] );
 
 		// Handle multi-line msgid.
 		while ( isset( $lines[ $i + 1 ] ) && preg_match( '/^"(.+)"$/', $lines[ $i + 1 ], $cont ) ) {
-			$msgid .= $cont[1];
+			$msgid .= stripcslashes( $cont[1] );
 			++$i;
 		}
 
 		// Check for msgid_plural.
 		$msgid_plural = '';
 		if ( isset( $lines[ $i + 1 ] ) && preg_match( '/^msgid_plural "(.+)"$/', $lines[ $i + 1 ], $pm ) ) {
-			$msgid_plural = $pm[1];
+			$msgid_plural = stripcslashes( $pm[1] );
 			++$i;
 			// Handle multi-line msgid_plural.
 			while ( isset( $lines[ $i + 1 ] ) && preg_match( '/^"(.+)"$/', $lines[ $i + 1 ], $cont ) ) {
-				$msgid_plural .= $cont[1];
+				$msgid_plural .= stripcslashes( $cont[1] );
 				++$i;
 			}
 		}
@@ -62,6 +62,10 @@ while ( $i < $count ) {
 }
 
 echo "Parsed " . count( $entries ) . " POT entries.\n";
+
+$project_version = '1.4.0';
+$header_now_iso  = gmdate( 'Y-m-d\TH:i:s+00:00' );
+$header_now_po   = gmdate( 'Y-m-d H:i:s+00:00' );
 
 // ----- Translation Dictionaries -----
 
@@ -1657,6 +1661,39 @@ $pt_PT_plural = array(
 	'%d hour remaining' => array( '%d hora restante', '%d horas restantes' ),
 );
 
+// Missing strings added in 1.4.0 source updates.
+$de_DE['No Analytics Data Yet'] = 'Noch keine Analysedaten';
+$de_DE['Analytics data will appear here once posts expire. Set expiry dates on posts to see activity.'] = 'Analysedaten erscheinen hier, sobald Beiträge ablaufen. Legen Sie Ablaufdaten für Beiträge fest, um Aktivität zu sehen.';
+$de_DE['Expiry date/time (local)'] = 'Ablaufdatum/-uhrzeit (lokal)';
+
+$es_ES['No Analytics Data Yet'] = 'Aún no hay datos de analítica';
+$es_ES['Analytics data will appear here once posts expire. Set expiry dates on posts to see activity.'] = 'Los datos analíticos aparecerán aquí cuando las entradas caduquen. Establece fechas de caducidad en las entradas para ver la actividad.';
+$es_ES['Expiry date/time (local)'] = 'Fecha/hora de caducidad (local)';
+
+$fr_FR['No Analytics Data Yet'] = 'Aucune donnée analytique pour le moment';
+$fr_FR['Analytics data will appear here once posts expire. Set expiry dates on posts to see activity.'] = 'Les données analytiques apparaîtront ici une fois que des articles auront expiré. Définissez des dates d\'expiration sur les articles pour voir l\'activité.';
+$fr_FR['Expiry date/time (local)'] = 'Date/heure d\'expiration (locale)';
+
+$it_IT['No Analytics Data Yet'] = 'Nessun dato analitico disponibile';
+$it_IT['Analytics data will appear here once posts expire. Set expiry dates on posts to see activity.'] = 'I dati analitici appariranno qui quando gli articoli scadranno. Imposta date di scadenza sugli articoli per vedere l\'attività.';
+$it_IT['Expiry date/time (local)'] = 'Data/ora di scadenza (locale)';
+
+$ja['No Analytics Data Yet'] = 'まだ解析データはありません';
+$ja['Analytics data will appear here once posts expire. Set expiry dates on posts to see activity.'] = '投稿が期限切れになると、ここに解析データが表示されます。投稿に有効期限を設定してアクティビティを確認してください。';
+$ja['Expiry date/time (local)'] = '有効期限の日付/時刻（ローカル）';
+
+$nl_NL['No Analytics Data Yet'] = 'Nog geen analysegegevens';
+$nl_NL['Analytics data will appear here once posts expire. Set expiry dates on posts to see activity.'] = 'Analysegegevens verschijnen hier zodra berichten verlopen. Stel vervaldata in bij berichten om activiteit te zien.';
+$nl_NL['Expiry date/time (local)'] = 'Vervaldatum/-tijd (lokaal)';
+
+$pt_BR['No Analytics Data Yet'] = 'Ainda não há dados de análise';
+$pt_BR['Analytics data will appear here once posts expire. Set expiry dates on posts to see activity.'] = 'Os dados de análise aparecerão aqui quando posts expirarem. Defina datas de expiração nos posts para ver atividade.';
+$pt_BR['Expiry date/time (local)'] = 'Data/hora de expiração (local)';
+
+$pt_PT['No Analytics Data Yet'] = 'Ainda não existem dados de análise';
+$pt_PT['Analytics data will appear here once posts expire. Set expiry dates on posts to see activity.'] = 'Os dados de análise aparecerão aqui quando as publicações expirarem. Defina datas de expiração nas publicações para ver atividade.';
+$pt_PT['Expiry date/time (local)'] = 'Data/hora de expiração (local)';
+
 // ----- Locale definitions -----
 
 $locales = array(
@@ -1744,10 +1781,10 @@ foreach ( $locales as $locale_code => $locale_data ) {
 	$po .= "# This file is distributed under the GPL-2.0+ license.\n";
 	$po .= "msgid \"\"\n";
 	$po .= "msgstr \"\"\n";
-	$po .= "\"Project-Id-Version: MSC Post Expiry 1.3.0\\n\"\n";
+	$po .= "\"Project-Id-Version: MSC Post Expiry {$project_version}\\n\"\n";
 	$po .= "\"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/msc-post-expiry\\n\"\n";
-	$po .= "\"POT-Creation-Date: 2026-05-03T12:00:00+00:00\\n\"\n";
-	$po .= "\"PO-Revision-Date: 2026-05-03 12:00:00+00:00\\n\"\n";
+	$po .= "\"POT-Creation-Date: {$header_now_iso}\\n\"\n";
+	$po .= "\"PO-Revision-Date: {$header_now_po}\\n\"\n";
 	$po .= "\"Last-Translator: Anomalous Developers <dev@anomalous.co.za>\\n\"\n";
 	$po .= "\"Language-Team: " . $locale_data['name'] . " <LL@li.org>\\n\"\n";
 	$po .= "\"Language: " . $locale_code . "\\n\"\n";
@@ -1768,15 +1805,15 @@ foreach ( $locales as $locale_code => $locale_data ) {
 
 		if ( ! empty( $msgid_plural ) ) {
 			// Plural entry.
-			$po .= 'msgid "' . $msgid . '"' . "\n";
-			$po .= 'msgid_plural "' . $msgid_plural . '"' . "\n";
+			$po .= 'msgid "' . addcslashes( $msgid, "\\\\\"" ) . '"' . "\n";
+			$po .= 'msgid_plural "' . addcslashes( $msgid_plural, "\\\\\"" ) . '"' . "\n";
 
 			if ( isset( $plurals[ $msgid ] ) ) {
 				if ( $is_japanese ) {
-					$po .= 'msgstr[0] "' . addcslashes( $plurals[ $msgid ][0], '"' ) . '"' . "\n";
+					$po .= 'msgstr[0] "' . addcslashes( $plurals[ $msgid ][0], "\\\\\"" ) . '"' . "\n";
 				} else {
-					$po .= 'msgstr[0] "' . addcslashes( $plurals[ $msgid ][0], '"' ) . '"' . "\n";
-					$po .= 'msgstr[1] "' . addcslashes( $plurals[ $msgid ][1], '"' ) . '"' . "\n";
+					$po .= 'msgstr[0] "' . addcslashes( $plurals[ $msgid ][0], "\\\\\"" ) . '"' . "\n";
+					$po .= 'msgstr[1] "' . addcslashes( $plurals[ $msgid ][1], "\\\\\"" ) . '"' . "\n";
 				}
 			} else {
 				if ( $is_japanese ) {
@@ -1788,9 +1825,9 @@ foreach ( $locales as $locale_code => $locale_data ) {
 			}
 		} else {
 			// Singular entry.
-			$po .= 'msgid "' . $msgid . '"' . "\n";
+			$po .= 'msgid "' . addcslashes( $msgid, "\\\\\"" ) . '"' . "\n";
 			if ( isset( $translations[ $msgid ] ) ) {
-				$po .= 'msgstr "' . addcslashes( $translations[ $msgid ], '"' ) . '"' . "\n";
+				$po .= 'msgstr "' . addcslashes( $translations[ $msgid ], "\\\\\"" ) . '"' . "\n";
 			} else {
 				$po .= 'msgstr ""' . "\n";
 			}

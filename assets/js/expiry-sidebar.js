@@ -29,7 +29,7 @@
 			el(
 				TextControl,
 				{
-					label: 'Expiry date/time (local)',
+					label: config.label,
 					type: 'datetime-local',
 					value: fieldValue,
 					onChange: function ( nextValue ) {

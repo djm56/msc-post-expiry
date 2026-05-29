@@ -165,6 +165,7 @@ class Module {
 				'metaKey' => self::META_KEY_EXPIRY,
 				'title'   => __( 'Post Expiry', 'msc-post-expiry' ),
 				'help'    => __( 'Set a date/time and action. Use the meta box below for redirect URL.', 'msc-post-expiry' ),
+				'label'   => __( 'Expiry date/time (local)', 'msc-post-expiry' ),
 			)
 		);
 	}

@@ -230,9 +230,9 @@ msc-post-expiry/
 ├── CHANGELOG.md                     # Version history
 ├── LICENSE                          # GPL-2.0+ license
 ├── includes/
-│   ├── class-msc-post-expiry.php           # Main plugin class
-│   ├── class-msc-post-expiry-settings.php  # Settings, metabox, tabs
-│   ├── class-msc-post-expiry-module.php    # Expiry processing, redirects, bulk, notifications
+│   ├── class-mscpe-plugin.php              # Main plugin class
+│   ├── class-mscpe-settings.php            # Settings, metabox, tabs
+│   ├── class-mscpe-module.php              # Expiry processing, redirects, bulk, notifications
 │   ├── class-mscpe-cron.php               # Legacy cron processing (date/time)
 │   ├── class-mscpe-migrations.php         # Database migrations
 │   ├── class-mscpe-seo.php               # SEO handling
@@ -268,5 +268,5 @@ For support, questions, or feature requests, please visit:
 - **Website**: https://anomalous.co.za
 
 **Status**: Production Ready  
-**Version**: 1.3.0  
-**Last Updated**: May 3, 2026
+**Version**: 1.4.0  
+**Last Updated**: May 28, 2026

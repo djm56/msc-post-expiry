@@ -3,7 +3,7 @@
  * Plugin Name: MSC Post Expiry
  * Plugin URI: https://github.com/djm56/msc-post-expiry
  * Description: Automatically expire posts and pages on a scheduled date. Set expiration dates in the post editor and let the plugin handle the rest.
- * Version: 1.3.0
+ * Version: 1.4.0
  * Author: Anomalous Developers
  * Author URI: https://anomalous.co.za
  * Text Domain: msc-post-expiry
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Current plugin version.
  */
-define( 'MSCPE_PLUGIN_VERSION', '1.3.0' );
+define( 'MSCPE_PLUGIN_VERSION', '1.4.0' );
 
 /**
  * Absolute path to the main plugin file.
@@ -46,9 +46,9 @@ require_once MSCPE_PLUGIN_DIR . 'includes/class-mscpe-migrations.php';
 require_once MSCPE_PLUGIN_DIR . 'includes/class-mscpe-seo.php';
 require_once MSCPE_PLUGIN_DIR . 'includes/class-mscpe-rules.php';
 require_once MSCPE_PLUGIN_DIR . 'includes/class-mscpe-analytics.php';
-require_once MSCPE_PLUGIN_DIR . 'includes/class-msc-post-expiry-module.php';
-require_once MSCPE_PLUGIN_DIR . 'includes/class-msc-post-expiry-settings.php';
-require_once MSCPE_PLUGIN_DIR . 'includes/class-msc-post-expiry.php';
+require_once MSCPE_PLUGIN_DIR . 'includes/class-mscpe-module.php';
+require_once MSCPE_PLUGIN_DIR . 'includes/class-mscpe-settings.php';
+require_once MSCPE_PLUGIN_DIR . 'includes/class-mscpe-plugin.php';
 
 register_activation_hook(
 	__FILE__,
@@ -63,6 +63,7 @@ register_deactivation_hook(
 add_action(
 	'plugins_loaded',
 	static function () {
+		load_plugin_textdomain( 'msc-post-expiry', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 		MSCPE\Plugin::instance();
 	}
 );
