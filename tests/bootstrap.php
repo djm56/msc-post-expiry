@@ -492,7 +492,7 @@ if ( ! function_exists( 'is_admin' ) ) {
  *  Plugin constants
  * ---------------------------------------------------------------
  */
-define( 'MSCPE_PLUGIN_VERSION', '1.4.0' );
+define( 'MSCPE_PLUGIN_VERSION', '1.4.1' );
 define( 'MSCPE_PLUGIN_FILE', dirname( __DIR__ ) . '/msc-post-expiry.php' );
 define( 'MSCPE_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
 define( 'MSCPE_PLUGIN_URL', 'https://example.com/wp-content/plugins/msc-post-expiry/' );

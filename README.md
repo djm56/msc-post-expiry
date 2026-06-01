@@ -268,5 +268,5 @@ For support, questions, or feature requests, please visit:
 - **Website**: https://anomalous.co.za
 
 **Status**: Production Ready  
-**Version**: 1.4.0  
-**Last Updated**: May 28, 2026
+**Version**: 1.4.1  
+**Last Updated**: June 1, 2026

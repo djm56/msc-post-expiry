@@ -32,9 +32,30 @@ class Settings {
 		$this->plugin = $plugin;
 
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'admin_post_mscpe_save_settings', array( $this, 'handle_save' ) );
 		add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
 		add_action( 'save_post', array( $this, 'save_metabox' ), 10, 2 );
+	}
+
+	/**
+	 * Enqueue admin assets for the plugin settings page.
+	 *
+	 * @param string $hook_suffix Current admin page hook suffix.
+	 * @return void
+	 */
+	public function enqueue_assets( $hook_suffix ) {
+		if ( 'settings_page_mscpe-settings' !== $hook_suffix ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'mscpe-settings',
+			MSCPE_PLUGIN_URL . 'assets/js/settings.js',
+			array(),
+			MSCPE_PLUGIN_VERSION,
+			true
+		);
 	}
 
 	/**
@@ -98,10 +119,10 @@ class Settings {
 		 * Allows extensions to save additional settings within the same form submission.
 		 * Nonce is verified above.
 		 *
-		 * @param array $_POST Full POST data array.
+		 * @param array $sanitized_post Fully sanitized POST data array.
 		 */
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above at line 64.
-		do_action( 'mscpe_settings_save', $_POST );
+		$sanitized_post = $this->sanitize_recursive_text( wp_unslash( $_POST ) );
+		do_action( 'mscpe_settings_save', $sanitized_post );
 
 		wp_safe_redirect(
 			add_query_arg(
@@ -191,12 +212,14 @@ class Settings {
 			$active_tab = 'settings';
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only success notice flag.
+		$updated = isset( $_GET['updated'] ) ? sanitize_key( wp_unslash( $_GET['updated'] ) ) : '';
+
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'MSC Post Expiry', 'msc-post-expiry' ); ?></h1>
 
-			<?php // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only success notice flag. ?>
-			<?php if ( isset( $_GET['updated'] ) && '1' === $_GET['updated'] ) : ?>
+			<?php if ( '1' === $updated ) : ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'msc-post-expiry' ); ?></p></div>
 			<?php endif; ?>
 
@@ -422,22 +445,6 @@ class Settings {
 
 			<?php submit_button( __( 'Save Settings', 'msc-post-expiry' ) ); ?>
 		</form>
-
-		<script>
-		(function() {
-			var actionSelect = document.getElementById('expiry_action');
-			var categoryRow = document.getElementById('expiry-category-row');
-			function toggleCategory() {
-				if (categoryRow) {
-					categoryRow.style.display = (actionSelect.value === 'category') ? 'table-row' : 'none';
-				}
-			}
-			if (actionSelect && categoryRow) {
-				actionSelect.addEventListener('change', toggleCategory);
-				toggleCategory();
-			}
-		})();
-		</script>
 		<?php
 	}
 
@@ -735,7 +742,7 @@ class Settings {
 		if ( isset( $_GET['delete_rule'] ) && isset( $_GET['_wpnonce'] ) ) {
 			$nonce = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) );
 			if ( wp_verify_nonce( $nonce, 'mscpe_delete_rule' ) && current_user_can( 'manage_options' ) ) {
-				$rules->delete_rule( absint( $_GET['delete_rule'] ) );
+				$rules->delete_rule( absint( wp_unslash( $_GET['delete_rule'] ) ) );
 				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Rule deleted.', 'msc-post-expiry' ) . '</p></div>';
 			}
 		}
@@ -896,5 +903,27 @@ class Settings {
 			<?php endif; ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Recursively sanitize scalar input values with sanitize_text_field().
+	 *
+	 * @param mixed $value Raw input value.
+	 * @return mixed Sanitized value.
+	 */
+	private function sanitize_recursive_text( $value ) {
+		if ( is_array( $value ) ) {
+			foreach ( $value as $key => $item ) {
+				$value[ $key ] = $this->sanitize_recursive_text( $item );
+			}
+
+			return $value;
+		}
+
+		if ( is_scalar( $value ) ) {
+			return sanitize_text_field( (string) $value );
+		}
+
+		return $value;
 	}
 }

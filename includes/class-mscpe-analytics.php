@@ -45,12 +45,25 @@ class Analytics {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tab routing parameter.
+		$active_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'settings';
+		if ( 'analytics' !== $active_tab ) {
+			return;
+		}
+
 		wp_enqueue_script(
 			'mscpe-chartjs',
 			plugins_url( 'assets/js/vendor/chart.umd.min.js', MSCPE_PLUGIN_FILE ),
 			array(),
 			'4.4.0',
 			true
+		);
+
+		wp_enqueue_style(
+			'mscpe-analytics-dashboard',
+			MSCPE_PLUGIN_URL . 'assets/css/analytics-dashboard.css',
+			array(),
+			MSCPE_PLUGIN_VERSION
 		);
 	}
 
@@ -629,28 +642,6 @@ class Analytics {
 				<?php endif; ?>
 			</div>
 		</div>
-		<style>
-		.mscpe-analytics-dashboard { padding: 1em 0; }
-		.mscpe-analytics-controls { margin-bottom: 1.5em; }
-		.mscpe-analytics-controls label { margin-right: 1em; }
-		.mscpe-summary-cards { display: flex; flex-wrap: wrap; gap: 1em; margin-bottom: 2em; }
-		.mscpe-summary-card { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 1em 1.5em; min-width: 150px; flex: 1; }
-		.mscpe-summary-card h3 { margin: 0 0 0.5em 0; font-size: 0.9em; color: #646970; }
-		.mscpe-card-value { margin: 0; font-size: 1.8em; font-weight: 600; color: #2271b1; }
-		.mscpe-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5em; margin-bottom: 2em; }
-		.mscpe-chart-container { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 1em; }
-		.mscpe-chart-container h3 { margin: 0 0 1em 0; font-size: 1em; }
-		.mscpe-chart-container canvas { max-height: 250px; }
-		.mscpe-recent-activity { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 1em; }
-		.mscpe-recent-activity h3 { margin: 0 0 1em 0; font-size: 1em; }
-		.mscpe-status { display: inline-block; padding: 0.2em 0.6em; border-radius: 3px; font-size: 0.85em; }
-		.mscpe-status-success { background: #d4edda; color: #155724; }
-		.mscpe-status-failure { background: #f8d7da; color: #721c24; }
-		@media (max-width: 782px) {
-			.mscpe-charts-grid { grid-template-columns: 1fr; }
-			.mscpe-summary-cards { flex-direction: column; }
-		}
-		</style>
 		<?php
 	}
 

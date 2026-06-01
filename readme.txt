@@ -1,10 +1,10 @@
 === MSC Post Expiry ===
-Contributors: anomalous
+Contributors: djm56
 Tags: post-expiry,content,scheduling,automation
 Requires at least: 5.9
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,12 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 
 == Changelog ==
 
+= 1.4.1 =
+* Hardened input sanitization in settings flows and extension save hook payload.
+* Moved settings inline JavaScript to an external admin asset loaded only on the plugin settings page.
+* Moved analytics inline CSS to an external admin stylesheet loaded only on the Analytics tab.
+* Bumped version to 1.4.1.
+
 = 1.4.0 =
 * Renamed class files for consistent MSCPE prefix (class-mscpe-plugin.php, class-mscpe-settings.php, class-mscpe-module.php)
 * Bumped version to 1.4.0
@@ -162,6 +168,9 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 * Full internationalization support
 
 == Upgrade Notice ==
+
+= 1.4.1 =
+Security and maintainability update: improved settings input sanitization and moved inline admin assets to scoped external files.
 
 = 1.4.0 =
 Class files renamed for consistent naming. No functional changes — safe update.

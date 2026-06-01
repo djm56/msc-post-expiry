@@ -2,6 +2,19 @@
 
 All notable changes to MSC Post Expiry are documented in this file.
 
+## [1.4.1] - 2026-06-01
+
+### Changed
+
+- Bumped plugin version to 1.4.1
+- Moved settings inline JavaScript into a dedicated admin asset file and load it only on the MSC Post Expiry settings page
+- Moved analytics inline CSS into a dedicated admin stylesheet and load it only on the Analytics tab
+
+### Fixed
+
+- Sanitized success-notice and rule-delete input handling in settings page flows
+- Sanitized the payload passed to `mscpe_settings_save` so extensions receive cleaned input values
+
 ## [1.4.0] - 2026-05-28
 
 ### Changed
