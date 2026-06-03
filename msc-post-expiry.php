@@ -3,7 +3,7 @@
  * Plugin Name: MSC Post Expiry
  * Plugin URI: https://github.com/djm56/msc-post-expiry
  * Description: Automatically expire posts and pages on a scheduled date. Set expiration dates in the post editor and let the plugin handle the rest.
- * Version: 1.4.1
+ * Version: 1.5.1
  * Author: Anomalous Developers
  * Author URI: https://anomalous.co.za
  * Text Domain: msc-post-expiry
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Current plugin version.
  */
-define( 'MSCPE_PLUGIN_VERSION', '1.4.1' );
+define( 'MSCPE_PLUGIN_VERSION', '1.5.1' );
 
 /**
  * Absolute path to the main plugin file.
@@ -104,6 +104,17 @@ if ( ! function_exists( 'mscpe_get_expiry_datetime' ) ) {
 			$post_id = get_the_ID();
 		}
 
+		// Read unified timestamp first (preferred).
+		$timestamp = get_post_meta( $post_id, '_mscpe_expiry_timestamp', true );
+		if ( is_numeric( $timestamp ) && (int) $timestamp > 0 ) {
+			$ts = (int) $timestamp;
+			return array(
+				'date' => wp_date( 'Y-m-d', $ts ),
+				'time' => wp_date( 'H:i', $ts ),
+			);
+		}
+
+		// Fallback to separate date/time fields.
 		$expiry_date = get_post_meta( $post_id, 'mscpe_expiry_date', true );
 		if ( ! $expiry_date ) {
 			return false;
@@ -135,10 +146,12 @@ if ( ! function_exists( 'mscpe_is_post_expired' ) ) {
 			return false;
 		}
 
-		$expiry_datetime  = strtotime( $expiry['date'] . ' ' . $expiry['time'] );
-		$current_datetime = current_time( 'timestamp' );
+		$expiry_datetime = strtotime( $expiry['date'] . ' ' . $expiry['time'] );
+		if ( false === $expiry_datetime ) {
+			return false;
+		}
 
-		return $current_datetime >= $expiry_datetime;
+		return time() >= $expiry_datetime;
 	}
 }
 
@@ -159,8 +172,11 @@ if ( ! function_exists( 'mscpe_get_expiry_status' ) ) {
 			return __( 'No expiry set', 'msc-post-expiry' );
 		}
 
-		$expiry_datetime  = strtotime( $expiry['date'] . ' ' . $expiry['time'] );
-		$current_datetime = current_time( 'timestamp' );
+		$expiry_datetime = strtotime( $expiry['date'] . ' ' . $expiry['time'] );
+		if ( false === $expiry_datetime ) {
+			return __( 'No expiry set', 'msc-post-expiry' );
+		}
+		$current_datetime = time();
 
 		if ( $current_datetime >= $expiry_datetime ) {
 			return __( 'Expired', 'msc-post-expiry' );

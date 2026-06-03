@@ -63,7 +63,7 @@ while ( $i < $count ) {
 
 echo "Parsed " . count( $entries ) . " POT entries.\n";
 
-$project_version = '1.4.1';
+$project_version = '1.5.1';
 $header_now_iso  = gmdate( 'Y-m-d\TH:i:s+00:00' );
 $header_now_po   = gmdate( 'Y-m-d H:i:s+00:00' );
 

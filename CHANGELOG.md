@@ -2,6 +2,28 @@
 
 All notable changes to MSC Post Expiry are documented in this file.
 
+## [1.5.1] - 2026-06-03
+
+### Fixed
+
+- Refactored all analytics SQL queries to use fully-static SQL templates with toggle-pattern conditions (`(0 = %d OR column = %d)`) instead of dynamic SQL construction — eliminates `WordPress.DB.PreparedSQL.InterpolatedNotPrepared` and `WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare` warnings flagged in WordPress.org review
+- `build_where_clause()` now returns a flat associative array of sanitized scalar values (`range_cutoff`, `category_id`, `author_id`, `action`) for direct parameter passing to `$wpdb->prepare()` — no longer builds or returns SQL fragments
+- All `$wpdb->prepare()` calls in `class-mscpe-analytics.php` now use static SQL strings with only `%d`/`%s` placeholders — no variable SQL fragments are injected into query templates
+- Removed all `phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared` and `WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare` inline suppression comments (no longer needed)
+- Removed all `phpcs:ignore WordPress.DB.DirectDatabaseQuery.UnescapedDBParameter` inline suppression comments (no longer needed)
+
+## [1.5.0] - 2026-06-02
+
+### Fixed
+
+- Fixed duplicate "Post Expiry" metabox appearing in the block editor — classic metabox now only registers in the classic editor via `use_block_editor_for_post()` / `use_block_editor_for_post_type()` guard
+- Classic metabox render now reads `_mscpe_expiry_timestamp` first (with `is_numeric()` + `> 0` validation), falling back to legacy `mscpe_expiry_date`/`mscpe_expiry_time` fields
+- Classic metabox save now writes `_mscpe_expiry_timestamp` alongside `mscpe_expiry_date`/`mscpe_expiry_time`, ensuring cron processing works for classic-editor saves; defaults empty time to `00:00`; includes autosave and revision guards, plus date/time regex validation
+- `register_metabox()` replaced `foreach` loop with `in_array()` for post-type eligibility check and accepts second `$post` parameter from the `add_meta_boxes` hook
+- `mscpe_get_expiry_datetime()` reads `_mscpe_expiry_timestamp` first (with `is_numeric()` + `> 0` validation), falls back to date/time fields, and uses `wp_date()` for timezone-aware formatting
+- `mscpe_is_post_expired()` added `strtotime()` false guard and replaced deprecated `current_time('timestamp')` with `time()`
+- `mscpe_get_expiry_status()` added `strtotime()` false guard and replaced deprecated `current_time('timestamp')` with `time()`
+
 ## [1.4.1] - 2026-06-01
 
 ### Changed

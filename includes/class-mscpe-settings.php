@@ -34,7 +34,7 @@ class Settings {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'admin_post_mscpe_save_settings', array( $this, 'handle_save' ) );
-		add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
+		add_action( 'add_meta_boxes', array( $this, 'register_metabox' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'save_metabox' ), 10, 2 );
 	}
 
@@ -535,9 +535,20 @@ class Settings {
 
 	/**
 	 * Register metabox for post expiry date.
+	 *
+	 * @param string  $post_type Post type being filtered.
+	 * @param WP_Post $post      Post object being edited.
 	 */
-	public function register_metabox() {
+	public function register_metabox( $post_type, $post ) {
 		if ( ! $this->plugin->get_option( 'module_enabled', 1 ) ) {
+			return;
+		}
+
+		// Only show in classic editor — block editor uses expiry-sidebar.js.
+		if ( $post && use_block_editor_for_post( $post ) ) {
+			return;
+		}
+		if ( ! $post && use_block_editor_for_post_type( $post_type ) ) {
 			return;
 		}
 
@@ -552,16 +563,18 @@ class Settings {
 			$target_post_types = array_diff( $all_post_types, $post_types );
 		}
 
-		foreach ( $target_post_types as $post_type ) {
-			add_meta_box(
-				'mscpe-expiry-metabox',
-				__( 'Post Expiry', 'msc-post-expiry' ),
-				array( $this, 'render_metabox' ),
-				$post_type,
-				'side',
-				'high'
-			);
+		if ( ! in_array( $post_type, $target_post_types, true ) ) {
+			return;
 		}
+
+		add_meta_box(
+			'mscpe-expiry-metabox',
+			__( 'Post Expiry', 'msc-post-expiry' ),
+			array( $this, 'render_metabox' ),
+			$post_type,
+			'side',
+			'high'
+		);
 	}
 
 	/**
@@ -572,19 +585,29 @@ class Settings {
 	public function render_metabox( $post ) {
 		wp_nonce_field( 'mscpe_expiry_nonce', 'mscpe_expiry_nonce' );
 
-		$expiry_date = get_post_meta( $post->ID, 'mscpe_expiry_date', true );
-		$expiry_time = get_post_meta( $post->ID, 'mscpe_expiry_time', true );
+		// Read unified timestamp first (preferred).
+		$timestamp = get_post_meta( $post->ID, '_mscpe_expiry_timestamp', true );
+		if ( is_numeric( $timestamp ) && (int) $timestamp > 0 ) {
+			$ts              = (int) $timestamp;
+			$expiry_date_val = wp_date( 'Y-m-d', $ts );
+			$expiry_time_val = wp_date( 'H:i', $ts );
+		} else {
+			// Fallback to separate date/time fields.
+			$expiry_date_val = get_post_meta( $post->ID, 'mscpe_expiry_date', true );
+			$expiry_time_val = get_post_meta( $post->ID, 'mscpe_expiry_time', true );
+		}
+
 		?>
 		<div style="padding: 12px 0;">
 			<label for="mscpe_expiry_date" style="display:block;margin-bottom:8px;">
 				<strong><?php esc_html_e( 'Expiry Date', 'msc-post-expiry' ); ?></strong>
 			</label>
-			<input type="date" id="mscpe_expiry_date" name="mscpe_expiry_date" value="<?php echo esc_attr( $expiry_date ); ?>" style="width:100%;padding:6px;box-sizing:border-box;" />
+			<input type="date" id="mscpe_expiry_date" name="mscpe_expiry_date" value="<?php echo esc_attr( $expiry_date_val ); ?>" style="width:100%;padding:6px;box-sizing:border-box;" />
 
 			<label for="mscpe_expiry_time" style="display:block;margin-top:8px;margin-bottom:8px;">
 				<strong><?php esc_html_e( 'Expiry Time', 'msc-post-expiry' ); ?></strong>
 			</label>
-			<input type="time" id="mscpe_expiry_time" name="mscpe_expiry_time" value="<?php echo esc_attr( $expiry_time ); ?>" style="width:100%;padding:6px;box-sizing:border-box;" />
+			<input type="time" id="mscpe_expiry_time" name="mscpe_expiry_time" value="<?php echo esc_attr( $expiry_time_val ); ?>" style="width:100%;padding:6px;box-sizing:border-box;" />
 
 			<p class="description" style="margin-top:8px;font-size:12px;color:#666;">
 				<?php esc_html_e( 'Leave empty to disable expiry for this post.', 'msc-post-expiry' ); ?>
@@ -597,7 +620,7 @@ class Settings {
 	 * Save metabox data.
 	 *
 	 * @param int     $post_id Post ID.
-	 * @param WP_Post $post Post object.
+	 * @param WP_Post $post    Post object.
 	 */
 	public function save_metabox( $post_id, $post ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce check below.
@@ -615,17 +638,41 @@ class Settings {
 			return;
 		}
 
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		if ( wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Already verified above.
 		$expiry_date = isset( $_POST['mscpe_expiry_date'] ) ? sanitize_text_field( wp_unslash( $_POST['mscpe_expiry_date'] ) ) : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Already verified above.
 		$expiry_time = isset( $_POST['mscpe_expiry_time'] ) ? sanitize_text_field( wp_unslash( $_POST['mscpe_expiry_time'] ) ) : '';
 
+		if ( $expiry_date && ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $expiry_date ) ) {
+			return;
+		}
+		if ( $expiry_time && ! preg_match( '/^\d{2}:\d{2}$/', $expiry_time ) ) {
+			return;
+		}
+
 		if ( $expiry_date ) {
 			update_post_meta( $post_id, 'mscpe_expiry_date', $expiry_date );
 			update_post_meta( $post_id, 'mscpe_expiry_time', $expiry_time );
+
+			// Always store a unified timestamp when a date is provided.
+			// Default time to '00:00' so posts without a time still expire at midnight.
+			$effective_time = $expiry_time ?: '00:00';
+			$timestamp      = strtotime( $expiry_date . ' ' . $effective_time );
+			if ( false !== $timestamp ) {
+				update_post_meta( $post_id, '_mscpe_expiry_timestamp', $timestamp );
+			}
 		} else {
 			delete_post_meta( $post_id, 'mscpe_expiry_date' );
 			delete_post_meta( $post_id, 'mscpe_expiry_time' );
+			delete_post_meta( $post_id, '_mscpe_expiry_timestamp' );
 		}
 	}
 

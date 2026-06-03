@@ -4,7 +4,7 @@ Tags: post-expiry,content,scheduling,automation
 Requires at least: 5.9
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.4.1
+Stable tag: 1.5.1
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,22 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 
 == Changelog ==
 
+= 1.5.1 =
+* Refactored all analytics SQL queries to use fully-static SQL templates with toggle-pattern conditions, eliminating dynamic SQL construction that triggered WordPress.org review warnings
+* Replaced `build_where_clause()` SQL fragment assembly with flat associative array returning sanitized scalar values for direct `$wpdb->prepare()` parameterization
+* Removed all `phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared` and `WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare` comments (no longer needed)
+* All database queries now use `$wpdb->prepare()` with static SQL containing only `%d`/`%s` placeholders — no interpolated SQL fragments
+
+= 1.5.0 =
+* Fixed duplicate "Post Expiry" metabox appearing in block editor — classic metabox now only shows in classic editor via `use_block_editor_for_post()` per-post check
+* Fixed data inconsistency: classic editor metabox now saves `_mscpe_expiry_timestamp` alongside date/time fields, ensuring cron processing works correctly
+* Fixed timezone display: metabox and template functions now use `wp_date()` instead of `gmdate()` for local time
+* Added autosave and revision guards to metabox save handler
+* Added date/time format validation with regex before processing
+* Added `strtotime()` false guards in `mscpe_is_post_expired()` and `mscpe_get_expiry_status()` to prevent incorrect expiry detection
+* Replaced deprecated `current_time('timestamp')` with `time()` in expiry check functions
+* Added timestamp validation (`is_numeric()` && `>0`) to prevent 1970-01-01 display from non-numeric meta values
+
 = 1.4.1 =
 * Hardened input sanitization in settings flows and extension save hook payload.
 * Moved settings inline JavaScript to an external admin asset loaded only on the plugin settings page.
@@ -168,6 +184,12 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 * Full internationalization support
 
 == Upgrade Notice ==
+
+= 1.5.1 =
+SQL security update: All analytics database queries refactored to use fully-static SQL templates with toggle-pattern conditions. Recommended update for WordPress.org compliance.
+
+= 1.5.0 =
+Important bug fixes: duplicate metabox in block editor, data consistency between classic and block editor, timezone display, and deprecated function replacements. Recommended update for all users.
 
 = 1.4.1 =
 Security and maintainability update: improved settings input sanitization and moved inline admin assets to scoped external files.

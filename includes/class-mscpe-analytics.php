@@ -95,10 +95,8 @@ class Analytics {
 
 		$post_age = ( time() - get_post_time( 'U', false, $post ) ) / DAY_IN_SECONDS;
 
-		$table = $wpdb->prefix . 'mscpe_analytics';
-
 		$result = $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-			$table,
+			$wpdb->prefix . 'mscpe_analytics',
 			array(
 				'post_id'             => $post_id,
 				'action'              => sanitize_key( $action ),
@@ -156,49 +154,94 @@ class Analytics {
 	public function get_summary( $date_range = '30 days', $filters = array() ) {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'mscpe_analytics';
-		$where = $this->build_where_clause( $date_range, $filters );
+		$filter = $this->build_where_clause( $date_range, $filters );
 
-		$cutoff     = time() - ( 30 * DAY_IN_SECONDS );
-		$total_args = array_merge( array( $cutoff ), $where['args'] );
-		$total      = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+		// Each query uses a fully-static SQL template. Optional filter conditions use a
+		// toggle pattern: "(0 = %d OR column = %d)" — passing 0 makes the OR always true
+		// (no filter applied); passing a non-zero value activates the filter. This means
+		// the SQL template is always a string literal with no dynamic SQL construction,
+		// so no variable SQL fragment is ever passed to prepare() or get_var().
+		$cutoff = time() - ( 30 * DAY_IN_SECONDS );
+		$total  = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE created_at >= %d {$where['sql_extra']}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$total_args
+				"SELECT COUNT(*) FROM {$wpdb->prefix}mscpe_analytics
+				WHERE created_at >= %d
+				AND (0 = %d OR created_at >= %d)
+				AND (%d = 0 OR category_id = %d)
+				AND (%d = 0 OR author_id = %d)
+				AND ('' = %s OR action = %s)",
+				$cutoff,
+				$filter['range_cutoff'], $filter['range_cutoff'],
+				$filter['category_id'],  $filter['category_id'],
+				$filter['author_id'],    $filter['author_id'],
+				$filter['action'],       $filter['action']
 			)
 		);
 
 		$month_start = mktime( 0, 0, 0, (int) gmdate( 'n' ), 1 );
-		$month_args  = array_merge( array( $month_start ), $where['args'] );
-		$month_count = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$month_count = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE created_at >= %d {$where['sql_extra']}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$month_args
+				"SELECT COUNT(*) FROM {$wpdb->prefix}mscpe_analytics
+				WHERE created_at >= %d
+				AND (0 = %d OR created_at >= %d)
+				AND (%d = 0 OR category_id = %d)
+				AND (%d = 0 OR author_id = %d)
+				AND ('' = %s OR action = %s)",
+				$month_start,
+				$filter['range_cutoff'], $filter['range_cutoff'],
+				$filter['category_id'],  $filter['category_id'],
+				$filter['author_id'],    $filter['author_id'],
+				$filter['action'],       $filter['action']
 			)
 		);
 
 		$week_start = time() - ( 7 * DAY_IN_SECONDS );
-		$week_args  = array_merge( array( $week_start ), $where['args'] );
-		$week_count = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$week_count = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE created_at >= %d {$where['sql_extra']}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$week_args
+				"SELECT COUNT(*) FROM {$wpdb->prefix}mscpe_analytics
+				WHERE created_at >= %d
+				AND (0 = %d OR created_at >= %d)
+				AND (%d = 0 OR category_id = %d)
+				AND (%d = 0 OR author_id = %d)
+				AND ('' = %s OR action = %s)",
+				$week_start,
+				$filter['range_cutoff'], $filter['range_cutoff'],
+				$filter['category_id'],  $filter['category_id'],
+				$filter['author_id'],    $filter['author_id'],
+				$filter['action'],       $filter['action']
 			)
 		);
 
-		$avg_args = array_merge( array( $cutoff ), $where['args'] );
-		$avg_age  = (float) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$avg_age = (float) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare(
-				"SELECT AVG(age_days) FROM {$table} WHERE created_at >= %d {$where['sql_extra']}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$avg_args
+				"SELECT AVG(age_days) FROM {$wpdb->prefix}mscpe_analytics
+				WHERE created_at >= %d
+				AND (0 = %d OR created_at >= %d)
+				AND (%d = 0 OR category_id = %d)
+				AND (%d = 0 OR author_id = %d)
+				AND ('' = %s OR action = %s)",
+				$cutoff,
+				$filter['range_cutoff'], $filter['range_cutoff'],
+				$filter['category_id'],  $filter['category_id'],
+				$filter['author_id'],    $filter['author_id'],
+				$filter['action'],       $filter['action']
 			)
 		);
 
-		$success_args  = array_merge( array( $cutoff ), $where['args'] );
-		$success_count = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$success_count = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE status = 'success' AND created_at >= %d {$where['sql_extra']}", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$success_args
+				"SELECT COUNT(*) FROM {$wpdb->prefix}mscpe_analytics
+				WHERE status = 'success'
+				AND created_at >= %d
+				AND (0 = %d OR created_at >= %d)
+				AND (%d = 0 OR category_id = %d)
+				AND (%d = 0 OR author_id = %d)
+				AND ('' = %s OR action = %s)",
+				$cutoff,
+				$filter['range_cutoff'], $filter['range_cutoff'],
+				$filter['category_id'],  $filter['category_id'],
+				$filter['author_id'],    $filter['author_id'],
+				$filter['action'],       $filter['action']
 			)
 		);
 
@@ -223,27 +266,23 @@ class Analytics {
 	public function get_action_breakdown( $date_range = '30 days', $filters = array() ) {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'mscpe_analytics';
-		$where = $this->build_where_clause( $date_range, $filters );
+		$filter = $this->build_where_clause( $date_range, $filters );
 
-		if ( ! empty( $where['args'] ) ) {
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- table is from $wpdb->prefix; WHERE from build_where_clause() with parameterized args.
-			$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
-				$wpdb->prepare(
-					"SELECT action, COUNT(*) as count FROM {$table} {$where['sql']} GROUP BY action ORDER BY count DESC",
-					$where['args']
-				),
-				ARRAY_A
-			);
-			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-		} else {
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is from $wpdb->prefix; no user input in this branch.
-			$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
-				"SELECT action, COUNT(*) as count FROM {$table} GROUP BY action ORDER BY count DESC",
-				ARRAY_A
-			);
-			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		}
+		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->prepare(
+				"SELECT action, COUNT(*) as count FROM {$wpdb->prefix}mscpe_analytics
+				WHERE (0 = %d OR created_at >= %d)
+				AND (%d = 0 OR category_id = %d)
+				AND (%d = 0 OR author_id = %d)
+				AND ('' = %s OR action = %s)
+				GROUP BY action ORDER BY count DESC",
+				$filter['range_cutoff'], $filter['range_cutoff'],
+				$filter['category_id'],  $filter['category_id'],
+				$filter['author_id'],    $filter['author_id'],
+				$filter['action'],       $filter['action']
+			),
+			ARRAY_A
+		);
 
 		$labels = array(
 			'draft'    => __( 'Draft', 'msc-post-expiry' ),
@@ -278,8 +317,7 @@ class Analytics {
 	public function get_trends( $date_range = '30 days', $granularity = 'day', $filters = array() ) {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'mscpe_analytics';
-		$where = $this->build_where_clause( $date_range, $filters );
+		$filter = $this->build_where_clause( $date_range, $filters );
 
 		switch ( $granularity ) {
 			case 'week':
@@ -292,21 +330,23 @@ class Analytics {
 				$date_format = '%Y-%m-%d';
 		}
 
-		$prepare_args = array_merge( array( $date_format ), $where['args'] );
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is from $wpdb->prefix; WHERE from build_where_clause() with parameterized args.
-		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare(
-				"SELECT DATE_FORMAT(FROM_UNIXTIME(created_at), %s) as date_group, COUNT(*) as count 
-				FROM {$table} 
-				{$where['sql']} 
-				GROUP BY date_group 
-				ORDER BY date_group ASC",
-				$prepare_args
+				"SELECT DATE_FORMAT(FROM_UNIXTIME(created_at), %s) as date_group, COUNT(*) as count
+				FROM {$wpdb->prefix}mscpe_analytics
+				WHERE (0 = %d OR created_at >= %d)
+				AND (%d = 0 OR category_id = %d)
+				AND (%d = 0 OR author_id = %d)
+				AND ('' = %s OR action = %s)
+				GROUP BY date_group ORDER BY date_group ASC",
+				$date_format,
+				$filter['range_cutoff'], $filter['range_cutoff'],
+				$filter['category_id'],  $filter['category_id'],
+				$filter['author_id'],    $filter['author_id'],
+				$filter['action'],       $filter['action']
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$data = array();
 		foreach ( $results as $row ) {
@@ -331,26 +371,26 @@ class Analytics {
 	public function get_top_categories( $date_range = '30 days', $limit = 5, $filters = array() ) {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'mscpe_analytics';
-		$where = $this->build_where_clause( $date_range, $filters );
+		$filter = $this->build_where_clause( $date_range, $filters );
 
-		$prepare_args = array_merge( $where['args'], array( $limit ) );
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is from $wpdb->prefix; WHERE from build_where_clause() with parameterized args.
-		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare(
-				"SELECT a.category_id, t.name as category_name, COUNT(*) as count 
-				FROM {$table} a 
-				LEFT JOIN {$wpdb->terms} t ON t.term_id = a.category_id 
-				{$where['sql']} 
-				GROUP BY a.category_id 
-				ORDER BY count DESC 
-				LIMIT %d",
-				$prepare_args
+				"SELECT a.category_id, t.name as category_name, COUNT(*) as count
+				FROM {$wpdb->prefix}mscpe_analytics a
+				LEFT JOIN {$wpdb->terms} t ON t.term_id = a.category_id
+				WHERE (0 = %d OR a.created_at >= %d)
+				AND (%d = 0 OR a.category_id = %d)
+				AND (%d = 0 OR a.author_id = %d)
+				AND ('' = %s OR a.action = %s)
+				GROUP BY a.category_id ORDER BY count DESC LIMIT %d",
+				$filter['range_cutoff'], $filter['range_cutoff'],
+				$filter['category_id'],  $filter['category_id'],
+				$filter['author_id'],    $filter['author_id'],
+				$filter['action'],       $filter['action'],
+				absint( $limit )
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$data = array();
 		foreach ( $results as $row ) {
@@ -375,26 +415,26 @@ class Analytics {
 	public function get_top_authors( $date_range = '30 days', $limit = 5, $filters = array() ) {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'mscpe_analytics';
-		$where = $this->build_where_clause( $date_range, $filters );
+		$filter = $this->build_where_clause( $date_range, $filters );
 
-		$prepare_args = array_merge( $where['args'], array( $limit ) );
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is from $wpdb->prefix; WHERE from build_where_clause() with parameterized args.
-		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare(
-				"SELECT a.author_id, u.display_name as author_name, COUNT(*) as count 
-				FROM {$table} a 
-				LEFT JOIN {$wpdb->users} u ON u.ID = a.author_id 
-				{$where['sql']} 
-				GROUP BY a.author_id 
-				ORDER BY count DESC 
-				LIMIT %d",
-				$prepare_args
+				"SELECT a.author_id, u.display_name as author_name, COUNT(*) as count
+				FROM {$wpdb->prefix}mscpe_analytics a
+				LEFT JOIN {$wpdb->users} u ON u.ID = a.author_id
+				WHERE (0 = %d OR a.created_at >= %d)
+				AND (%d = 0 OR a.category_id = %d)
+				AND (%d = 0 OR a.author_id = %d)
+				AND ('' = %s OR a.action = %s)
+				GROUP BY a.author_id ORDER BY count DESC LIMIT %d",
+				$filter['range_cutoff'], $filter['range_cutoff'],
+				$filter['category_id'],  $filter['category_id'],
+				$filter['author_id'],    $filter['author_id'],
+				$filter['action'],       $filter['action'],
+				absint( $limit )
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$data = array();
 		foreach ( $results as $row ) {
@@ -417,21 +457,17 @@ class Analytics {
 	public function get_recent_entries( $limit = 20 ) {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'mscpe_analytics';
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table is from $wpdb->prefix.
-		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$results = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare(
-				"SELECT a.*, p.post_title 
-				FROM {$table} a 
-				LEFT JOIN {$wpdb->posts} p ON p.ID = a.post_id 
-				ORDER BY a.created_at DESC 
+				"SELECT a.*, p.post_title
+				FROM {$wpdb->prefix}mscpe_analytics a
+				LEFT JOIN {$wpdb->posts} p ON p.ID = a.post_id
+				ORDER BY a.created_at DESC
 				LIMIT %d",
 				absint( $limit )
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return array_map(
 			function ( $row ) {
@@ -452,16 +488,23 @@ class Analytics {
 	}
 
 	/**
-	 * Builds WHERE clause for queries.
+	 * Extracts sanitized filter values for use in static SQL query templates.
 	 *
-	 * @param string $date_range Date range.
-	 * @param array  $filters    Filters.
-	 * @return array With 'sql', 'sql_extra' and 'args' keys.
+	 * Returns flat, sanitized scalar values. Each query method embeds these directly
+	 * as %d/%s placeholders in a fully-static SQL template using a toggle pattern:
+	 * e.g. "(0 = %d OR column = %d)" — passing 0 / '' disables that condition so the
+	 * entire SQL string is always a literal with no dynamic SQL structure.
+	 *
+	 * @param string $date_range Date range: '7 days', '30 days', '90 days', 'all'.
+	 * @param array  $filters    Optional filters: category_id, author_id, action.
+	 * @return array {
+	 *     @type int    $range_cutoff UNIX timestamp for the start of the date range, 0 for 'all'.
+	 *     @type int    $category_id  Category term ID filter, 0 means no filter.
+	 *     @type int    $author_id    Author user ID filter, 0 means no filter.
+	 *     @type string $action       Expiry action slug filter, '' means no filter.
+	 * }
 	 */
 	private function build_where_clause( $date_range, $filters ) {
-		$where_clauses = array();
-		$args          = array();
-
 		$days = 30;
 		switch ( $date_range ) {
 			case '7 days':
@@ -478,41 +521,11 @@ class Analytics {
 				break;
 		}
 
-		if ( $days > 0 ) {
-			$cutoff          = time() - ( $days * DAY_IN_SECONDS );
-			$where_clauses[] = 'created_at >= %d';
-			$args[]          = $cutoff;
-		}
-
-		if ( ! empty( $filters['category_id'] ) ) {
-			$where_clauses[] = 'category_id = %d';
-			$args[]          = absint( $filters['category_id'] );
-		}
-
-		if ( ! empty( $filters['author_id'] ) ) {
-			$where_clauses[] = 'author_id = %d';
-			$args[]          = absint( $filters['author_id'] );
-		}
-
-		if ( ! empty( $filters['action'] ) ) {
-			$where_clauses[] = 'action = %s';
-			$args[]          = sanitize_key( $filters['action'] );
-		}
-
-		if ( empty( $where_clauses ) ) {
-			return array(
-				'sql'       => '',
-				'sql_extra' => '',
-				'args'      => array(),
-			);
-		}
-
-		$where_sql = 'WHERE ' . implode( ' AND ', $where_clauses );
-
 		return array(
-			'sql'       => $where_sql,
-			'sql_extra' => ' AND ' . implode( ' AND ', $where_clauses ),
-			'args'      => $args,
+			'range_cutoff' => $days > 0 ? time() - ( $days * DAY_IN_SECONDS ) : 0,
+			'category_id'  => ! empty( $filters['category_id'] ) ? absint( $filters['category_id'] ) : 0,
+			'author_id'    => ! empty( $filters['author_id'] ) ? absint( $filters['author_id'] ) : 0,
+			'action'       => ! empty( $filters['action'] ) ? sanitize_key( $filters['action'] ) : '',
 		);
 	}
 
