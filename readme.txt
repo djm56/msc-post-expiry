@@ -2,9 +2,9 @@
 Contributors: djm56
 Tags: post-expiry,content,scheduling,automation
 Requires at least: 5.9
-Tested up to: 7.0
+Tested up to: 7.0.2
 Requires PHP: 7.4
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,10 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 
 == Changelog ==
 
+= 1.5.2 =
+* Confirmed compatibility with WordPress 7.0.2 — no functional changes.
+* Updated "Tested up to" to 7.0.2.
+
 = 1.5.1 =
 * Refactored all analytics SQL queries to use fully-static SQL templates with toggle-pattern conditions, eliminating dynamic SQL construction that triggered WordPress.org review warnings
 * Replaced `build_where_clause()` SQL fragment assembly with flat associative array returning sanitized scalar values for direct `$wpdb->prepare()` parameterization
@@ -184,6 +188,9 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 * Full internationalization support
 
 == Upgrade Notice ==
+
+= 1.5.2 =
+Compatibility update: confirmed tested against WordPress 7.0.2. No functional changes — safe update.
 
 = 1.5.1 =
 SQL security update: All analytics database queries refactored to use fully-static SQL templates with toggle-pattern conditions. Recommended update for WordPress.org compliance.

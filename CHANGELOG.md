@@ -2,6 +2,12 @@
 
 All notable changes to MSC Post Expiry are documented in this file.
 
+## [1.5.2] - 2026-07-24
+
+### Changed
+
+- Confirmed compatibility with WordPress 7.0.2 — updated "Tested up to" header to 7.0.2. No functional changes.
+
 ## [1.5.1] - 2026-06-03
 
 ### Fixed
