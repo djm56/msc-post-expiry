@@ -547,6 +547,18 @@ if ( ! function_exists( 'esc_url_raw' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_kses_post' ) ) {
+	function wp_kses_post( $content ) {
+		return $content;
+	}
+}
+
+if ( ! function_exists( 'esc_sql' ) ) {
+	function esc_sql( $data ) {
+		return is_array( $data ) ? array_map( 'esc_sql', $data ) : addslashes( (string) $data );
+	}
+}
+
 if ( ! function_exists( 'sanitize_email' ) ) {
 	function sanitize_email( $email ) {
 		return filter_var( $email, FILTER_SANITIZE_EMAIL );

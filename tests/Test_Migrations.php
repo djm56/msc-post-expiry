@@ -21,7 +21,7 @@ class Test_Migrations extends MSCPE_Test_Case {
 	 * Test MIGRATION_VERSION constant.
 	 */
 	public function test_migration_version() {
-		$this->assertSame( '1.2.0', Migrations::MIGRATION_VERSION );
+		$this->assertSame( '1.6.0', Migrations::MIGRATION_VERSION );
 	}
 
 	/**
@@ -55,20 +55,23 @@ class Test_Migrations extends MSCPE_Test_Case {
 			$reflection->getMethods()
 		);
 
-		$this->assertContains( 'create_rules_table', $methods );
 		$this->assertContains( 'create_analytics_table', $methods );
+		$this->assertContains( 'drop_unused_rules_table', $methods );
+
+		// The unused rules table is no longer created (removed in 1.6.0).
+		$this->assertNotContains( 'create_rules_table', $methods );
 	}
 
 	/**
 	 * Test run_migrations is idempotent (skips if version matches).
 	 */
 	public function test_run_migrations_idempotent() {
-		$this->set_option( 'mscpe_db_version', '1.2.0' );
+		$this->set_option( 'mscpe_db_version', '1.6.0' );
 
 		// Should not error and should return early.
 		Migrations::run_migrations();
 
 		// Version should be unchanged.
-		$this->assertSame( '1.2.0', get_option( 'mscpe_db_version' ) );
+		$this->assertSame( '1.6.0', get_option( 'mscpe_db_version' ) );
 	}
 }

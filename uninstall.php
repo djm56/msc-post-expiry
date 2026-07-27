@@ -15,6 +15,8 @@ delete_option( 'mscpe_seo_options' );
 delete_option( 'mscpe_rules' );
 delete_option( 'mscpe_action_log' );
 delete_option( 'mscpe_db_version' );
+delete_option( 'mscpe_activated_time' );
+delete_option( 'mscpe_review_dismissed' );
 
 // Unschedule cron events.
 $mscpe_hooks = array( 'mscpe_process_expired_posts', 'mscpe_process_expiry_advanced' );

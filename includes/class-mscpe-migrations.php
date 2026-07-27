@@ -21,7 +21,7 @@ class Migrations {
 	/**
 	 * Current migration version.
 	 */
-	const MIGRATION_VERSION = '1.2.0';
+	const MIGRATION_VERSION = '1.6.0';
 
 	/**
 	 * Option key for tracking migration version.
@@ -40,41 +40,26 @@ class Migrations {
 			return;
 		}
 
-		self::create_rules_table();
 		self::create_analytics_table();
+		self::drop_unused_rules_table();
 
 		update_option( self::VERSION_OPTION, self::MIGRATION_VERSION );
 	}
 
 	/**
-	 * Creates the rules table.
+	 * Drops the legacy rules table.
+	 *
+	 * Rules were always stored in the `mscpe_rules` option; the table created
+	 * by earlier versions was never read or written and is removed in 1.6.0.
 	 *
 	 * @return void
 	 */
-	private static function create_rules_table() {
+	private static function drop_unused_rules_table() {
 		global $wpdb;
 
-		$table_name      = $wpdb->prefix . 'mscpe_rules';
-		$charset_collate = $wpdb->get_charset_collate();
-
-		$sql = "CREATE TABLE {$table_name} (
-			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-			name varchar(255) NOT NULL DEFAULT '',
-			description text NOT NULL,
-			enabled tinyint(1) NOT NULL DEFAULT 1,
-			condition_type varchar(50) NOT NULL DEFAULT '',
-			condition_config longtext NOT NULL,
-			action_type varchar(50) NOT NULL DEFAULT '',
-			action_config longtext NOT NULL,
-			created_at bigint(20) unsigned NOT NULL DEFAULT 0,
-			updated_at bigint(20) unsigned NOT NULL DEFAULT 0,
-			PRIMARY KEY (id),
-			KEY enabled (enabled),
-			KEY condition_type (condition_type)
-		) {$charset_collate};";
-
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
+		$table = esc_sql( $wpdb->prefix . 'mscpe_rules' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS `{$table}`" );
 	}
 
 	/**
@@ -125,7 +110,9 @@ class Migrations {
 		);
 
 		foreach ( $tables as $table ) {
-			$wpdb->query( "DROP TABLE IF EXISTS {$table}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$table = esc_sql( $table );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "DROP TABLE IF EXISTS `{$table}`" );
 		}
 
 		delete_option( self::VERSION_OPTION );

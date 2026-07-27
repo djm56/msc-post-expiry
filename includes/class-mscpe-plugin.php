@@ -98,6 +98,10 @@ class Plugin {
 
 		// Run DB migrations.
 		Migrations::run_migrations();
+
+		if ( ! get_option( 'mscpe_activated_time' ) ) {
+			update_option( 'mscpe_activated_time', time() );
+		}
 	}
 
 	/**
@@ -126,13 +130,74 @@ class Plugin {
 		$this->module    = new Module( $this );
 		$this->cron      = new Cron( $this );
 
-		// Hook into the existing cron's expiry to log analytics and apply SEO.
-		add_action( 'mscpe_after_expire_post', array( $this, 'on_post_expired' ), 10, 2 );
-
 		// Schedule module cron if not set.
 		if ( ! wp_next_scheduled( Module::CRON_HOOK ) ) {
 			wp_schedule_event( time(), 'mscpe_15min', Module::CRON_HOOK );
 		}
+
+		if ( is_admin() ) {
+			add_action( 'admin_notices', array( $this, 'maybe_render_review_notice' ) );
+			add_action( 'admin_init', array( $this, 'maybe_handle_review_dismiss' ) );
+		}
+	}
+
+	/**
+	 * Shows a one-time, dismissible review request on the plugin's settings page.
+	 *
+	 * @return void
+	 */
+	public function maybe_render_review_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$screen = get_current_screen();
+		if ( ! $screen || 'settings_page_mscpe-settings' !== $screen->id ) {
+			return;
+		}
+
+		if ( get_option( 'mscpe_review_dismissed' ) ) {
+			return;
+		}
+
+		$since = (int) get_option( 'mscpe_activated_time', 0 );
+		if ( $since <= 0 ) {
+			update_option( 'mscpe_activated_time', time() );
+			return;
+		}
+
+		if ( ( time() - $since ) < ( 7 * DAY_IN_SECONDS ) ) {
+			return;
+		}
+
+		$review_url  = 'https://wordpress.org/support/plugin/msc-post-expiry/reviews/#new-post';
+		$dismiss_url = wp_nonce_url( add_query_arg( 'mscpe_dismiss_review', '1' ), 'mscpe_dismiss_review' );
+		?>
+		<div class="notice notice-info is-dismissible">
+			<p>
+				<?php esc_html_e( 'Enjoying MSC Post Expiry? A quick review would really help other WordPress users find it.', 'msc-post-expiry' ); ?>
+				<a href="<?php echo esc_url( $review_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Leave a review', 'msc-post-expiry' ); ?></a>
+				&nbsp;·&nbsp;
+				<a href="<?php echo esc_url( $dismiss_url ); ?>"><?php esc_html_e( 'No thanks', 'msc-post-expiry' ); ?></a>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Permanently dismisses the review request.
+	 *
+	 * @return void
+	 */
+	public function maybe_handle_review_dismiss() {
+		if ( ! current_user_can( 'manage_options' ) || ! isset( $_GET['mscpe_dismiss_review'] ) ) {
+			return;
+		}
+
+		check_admin_referer( 'mscpe_dismiss_review' );
+		update_option( 'mscpe_review_dismissed', 1 );
+		wp_safe_redirect( remove_query_arg( array( 'mscpe_dismiss_review', '_wpnonce' ) ) );
+		exit;
 	}
 
 	/**
@@ -225,22 +290,4 @@ class Plugin {
 		return $this->settings;
 	}
 
-	/**
-	 * Callback when the legacy cron expires a post.
-	 * Logs analytics and applies SEO.
-	 *
-	 * @param int    $post_id Post ID.
-	 * @param string $action  Expiry action.
-	 */
-	public function on_post_expired( $post_id, $action ) {
-		if ( $this->analytics ) {
-			$this->analytics->log_expiry( $post_id, $action );
-		}
-		if ( $this->seo ) {
-			$this->seo->apply_seo_on_expiry( $post_id );
-		}
-		if ( $this->module ) {
-			$this->module->log_action( $post_id, $action );
-		}
-	}
 }

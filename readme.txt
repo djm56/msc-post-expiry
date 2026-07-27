@@ -1,35 +1,36 @@
 === MSC Post Expiry ===
 Contributors: djm56
-Tags: post-expiry,content,scheduling,automation
+Tags: expire posts, post expiration, unpublish, content expiration, redirect expired posts
 Requires at least: 5.9
-Tested up to: 7.0.2
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.5.2
+Stable tag: 1.7.0
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Automatically expire posts and pages on a scheduled date. Set expiration dates in the post editor and let the plugin handle the rest.
+Automatically expire posts and pages on a schedule — trash, delete, draft, make private, recategorise or redirect. With notifications and analytics.
 
 == Description ==
 
-MSC Post Expiry allows you to schedule automatic expiration for your posts and pages. Set an expiration date and time, and the plugin will automatically process the post when it expires.
+**Set an expiration date on any post or page and MSC Post Expiry handles the rest — automatically.**
+
+When the date arrives, choose what happens: move to trash, permanently delete, revert to draft, make private, move to a different category, or keep the post live and redirect visitors. Perfect for limited-time offers, event announcements, job listings, seasonal content and legal notices that must come down on time.
 
 **Features:**
 
-* Schedule post expiration dates and times
-* Choose expiration action: move to trash, permanently delete, convert to draft, change to private, move to category, or redirect only
-* Per-post expiry action override
+* Schedule post expiration dates and times from the block editor sidebar or classic editor metabox
+* Six expiration actions: move to trash, permanently delete, convert to draft, change to private, move to category, or redirect only
 * Custom redirect URLs for expired posts
-* Conditional expiry rules (by category, tag, author, age, custom field)
+* Smart Expiry Rules: conditional actions by category, tag, author, post age, comment count, view count, or custom field — with priorities
 * Bulk expiry scheduling from the Posts list
-* Email notifications before posts expire
-* SEO handling for expired posts (noindex, canonical, status codes)
-* Expiry analytics dashboard with charts
+* Email notifications before posts expire (1–30 days ahead, to author, admin or both)
+* SEO handling for expired posts (noindex/nofollow, canonical URL, 410 Gone status)
+* Expiry analytics dashboard with charts (trends, action breakdown, top categories and authors) — Chart.js bundled locally, no CDN
 * Action history log
-* Configure which post types support expiry
-* Block editor sidebar panel
+* Works with any public post type, include or exclude mode
 * Automatic processing via WordPress cron
-* Full internationalization support with 12 languages
+* No external services, no tracking — GDPR-friendly
+* Translated into 12 languages
 * Developer-friendly with helper functions and hooks
 
 **Use Cases:**
@@ -46,13 +47,17 @@ The plugin adds a "Post Expiry" panel to the block editor sidebar and a metabox 
 
 == Frequently Asked Questions ==
 
-= How do I set an expiration date for a post? =
+= How do I make a WordPress post expire automatically? =
 
-When editing a post or page, look for the "Post Expiry" panel in the block editor sidebar (or the metabox in the classic editor). Enter the date and time when you want the post to expire.
+When editing a post or page, look for the "Post Expiry" panel in the block editor sidebar (or the metabox in the classic editor). Enter the date and time when you want the post to expire — the plugin takes care of the rest via WordPress cron.
+
+= How do I automatically unpublish a post on a specific date? =
+
+Set an expiry date and choose the "Change to Draft" or "Change to Private" action — the post is unpublished automatically when the date passes, without deleting it. This is the simplest way to handle time-limited content expiration and scheduled unpublishing in WordPress.
 
 = What happens when a post expires? =
 
-The plugin will perform one of several actions based on your settings:
+The plugin performs one of six actions based on your settings:
 * **Move to Trash** - The post is moved to trash and no longer visible to visitors
 * **Permanently Delete** - The post is permanently deleted from your site
 * **Change to Draft** - The post is changed to draft status and hidden from visitors
@@ -60,31 +65,43 @@ The plugin will perform one of several actions based on your settings:
 * **Move to Category** - The post is moved to a selected category
 * **Redirect Only** - The post stays published but visitors are redirected to a specified URL
 
-= Can I set a different expiry action per post? =
+= Can I redirect an expired post instead of deleting it? =
 
-Yes! Each post can have its own expiry action, redirect URL, and target category. These override the global default.
+Yes. Choose the "Redirect Only" action (or a Smart Rule with a redirect action), enable redirects in Settings, and expired posts will send visitors to the URL you set — great for pointing old offers at your current landing page. The SEO tab can additionally set a canonical URL for expired content.
 
-= Can I get notified before a post expires? =
+= Does it work with the block editor (Gutenberg) and the classic editor? =
 
-Yes. Enable email notifications in Settings. You can choose to notify the post author, site admin, or both, and configure how many days before expiry the notification is sent.
+Yes, both. The block editor gets a "Post Expiry" sidebar panel; the classic editor gets a metabox with date and time fields.
+
+= Can I get an email before a post expires? =
+
+Yes. Enable email notifications in Settings. You can notify the post author, the site admin, or both, between 1 and 30 days before expiry. Each post triggers one reminder.
 
 = What are Smart Expiry Rules? =
 
-Smart Rules let you define automatic actions based on post properties. For example: "If a post is in the News category, move it to draft when it expires" or "If a post is older than 90 days, delete it permanently." Rules are checked in priority order when a post expires, and the first matching rule overrides the default action.
+Smart Rules let expiry behaviour depend on the post itself. For example: "If a post is in the News category, move it to draft when it expires" or "If a post is older than 90 days, delete it permanently." Conditions include category, tag, author, post age, comment count, view count and custom fields. Rules run in priority order (lower number wins) and the first matching rule overrides the default action.
 
-= How does the SEO feature work? =
+= Can each post have its own expiry action? =
 
-When a post expires, the plugin can automatically add noindex/nofollow meta tags, set a canonical URL (to home or category), and return a 410 Gone status code. Configure these in the SEO tab.
+Yes. In the "Post Expiry" panel (block editor sidebar or classic metabox) you can override the action for that single post — including a redirect URL or a target category — which takes precedence over the global default. You can also vary the action automatically with Smart Rules (by category, tag, author, age and more).
 
-= How often does the plugin check for expired posts? =
+= How does the SEO handling work? =
 
-The plugin checks for expired posts every 5 minutes (legacy date/time system) and every 15 minutes (timestamp system) using WordPress cron.
+When a post expires, the plugin can automatically add noindex/nofollow meta tags, set a canonical URL (to home or category), and return a 410 Gone status code so search engines drop the page cleanly. Configure these in the SEO tab.
 
-= Can I choose which post types support expiry? =
+= How often are expired posts checked? Is WP-Cron reliable? =
 
-Yes! Go to Settings > MSC Post Expiry to configure which post types support expiration.
+Expired posts are checked every 5 minutes via WordPress cron. Note that WP-Cron runs on site traffic — on very low-traffic sites a scheduled task can run late. For exact timing, point a real cron job at `wp-cron.php` (your host's docs explain how) — the plugin then processes precisely on schedule.
 
-= Is there a way to check if a post is expired? =
+= Can I expire many posts at once? =
+
+Yes. Select posts in the Posts list and choose the "Set expiry using default window" bulk action — each selected post gets an expiry date of now plus your configured default window (Settings → Bulk Scheduling, 1–3650 days).
+
+= Does this plugin work with custom post types? =
+
+Yes. Configure any public post types in Settings, in include or exclude mode.
+
+= Is there a way to check if a post is expired in my theme? =
 
 Yes, developers can use the helper functions:
 * `mscpe_is_post_expired( $post_id )` - Check if a post is expired
@@ -92,9 +109,13 @@ Yes, developers can use the helper functions:
 * `mscpe_get_expiry_status( $post_id )` - Get human-readable expiry status
 * `mscpe_format_expiry_datetime( $date, $time )` - Format expiry date for display
 
-= Does this plugin work with custom post types? =
+= Does it send data anywhere? Is it GDPR-friendly? =
 
-Yes! You can configure the plugin to work with any public post type, including custom post types.
+No data leaves your site. There are no external services, no CDN assets (Chart.js is bundled locally), and no tracking. Optional expiry-reminder emails are sent through your own WordPress mail.
+
+= What data is removed on uninstall? =
+
+Uninstalling deletes all plugin options, rules, the action log, the analytics table, and all expiry post meta. Log files under `wp-content/uploads/msc-post-expiry-logs/` can be removed manually.
 
 = What languages are supported? =
 
@@ -107,7 +128,29 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 3. Go to Settings > MSC Post Expiry to configure the plugin.
 4. When editing a post or page, use the "Post Expiry" panel to set expiration dates.
 
+== Screenshots ==
+
+1. Post expiry settings — choose the default expiry action (trash, delete, draft, private, move to category, or redirect), target post types, and set the bulk scheduling window.
+2. SEO handling for expired posts — add noindex/nofollow, set a canonical URL, and return a 410 Gone status so search engines drop expired content cleanly.
+3. Smart Expiry Rules — build conditional rules by category, tag, author, post age, comment count, view count or custom field, evaluated in priority order.
+4. Expiry action history — a log of recent automatic expiry actions with the post, action taken, and date.
+
 == Changelog ==
+
+= 1.7.0 =
+* Changed: Support now links to the plugin's WordPress.org support forum instead of the old contact button.
+
+= 1.6.0 =
+* New: Per-post override UI — set a different expiry action, redirect URL or target category for a single post, in both the block editor sidebar and the classic metabox.
+* Fixed: Smart Rules created through the admin UI never fired — the form now saves rules in the format the rules engine reads, sets the enabled flag, and stores the priority.
+* Fixed: Rule priority is now honoured — rules evaluate in priority order (lower number = higher priority).
+* Added: Comment Count and Post Views conditions to the Smart Rules form (previously engine-only).
+* Added: Rule name field, enabled checkbox, and a clearer rules table showing resolved conditions and status.
+* Fixed: Consolidated the two expiry pipelines into one — expired posts are now processed every 5 minutes with the full feature set (Smart Rules, per-post overrides, SEO handling, notifications, analytics). Previously, posts scheduled via the classic editor could be expired by a legacy pipeline that skipped these features and could double-log actions.
+* Fixed: Rescheduling an already-expired post from the block editor now re-arms processing.
+* Changed: Legacy per-post date/time meta is migrated automatically to the unified timestamp format.
+* Changed: Removed the unused rules database table (rules are stored in options; dropped on reactivation).
+* Improved: WordPress.org listing rewritten — clearer title, searchable tags, expanded FAQ, and captioned screenshots.
 
 = 1.5.2 =
 * Confirmed compatibility with WordPress 7.0.2 — no functional changes.
@@ -188,6 +231,9 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 * Full internationalization support
 
 == Upgrade Notice ==
+
+= 1.6.0 =
+Important fix: Smart Rules created in the admin now actually run, with working priorities. Single consolidated expiry pipeline — all features apply on the 5-minute check. Recommended for all users.
 
 = 1.5.2 =
 Compatibility update: confirmed tested against WordPress 7.0.2. No functional changes — safe update.

@@ -2,6 +2,37 @@
 
 All notable changes to MSC Post Expiry are documented in this file.
 
+## [1.7.0] - 2026-07-25
+
+### Changed
+
+- Support now links to the plugin's WordPress.org support forum instead of the old contact button.
+
+## [1.6.0] - 2026-07-24
+
+### Added
+
+- Per-post override UI: the "Post Expiry" panel (block editor sidebar and classic metabox) now lets you set a per-post expiry action, redirect URL and target category, backed by REST-registered meta. Previously the override meta was read at processing time but only settable by developers.
+- One-time, dismissible in-plugin review request on the settings page (7+ days after activation).
+
+### Fixed
+
+- **Smart Rules created through the admin UI never fired.** The Rules form posted `condition_value`/`action_value`/`priority` fields while `Rules::save_rule()` expected `condition_config`/`action_config` arrays and an `enabled` flag — UI-created rules were stored with empty configs and disabled. The form handler now resolves values (category/tag slug or ID, author login or ID, day counts, min/max ranges, `field=value` custom fields) into the engine's config format and sets the enabled flag.
+- **Rule priority is now stored and honoured** — `evaluate_rules()` sorts by priority (lower = higher) before evaluating; previously the priority field was collected but discarded and rules ran in insertion order.
+- **Consolidated the dual expiry pipelines.** The legacy 5-minute cron applied only the global action (skipping Smart Rules, per-post overrides, SEO, notifications, analytics) and did not set `_mscpe_expiry_processed`, so classic-editor posts could be processed by both pipelines and double-logged. The 5-minute cron now migrates legacy `mscpe_expiry_date`/`mscpe_expiry_time` meta to `_mscpe_expiry_timestamp` and delegates to the single full-featured pipeline.
+- **Rescheduling an expired post now re-arms processing** — setting a new future expiry date (block editor, classic metabox, or bulk action) resets the processed flag.
+
+### Added
+
+- Comment Count and Post Views conditions in the Smart Rules form (previously engine-only); rule name field; enabled checkbox; rules table now shows resolved condition summaries and enabled/disabled status.
+- `mscpe_before_expire_post` / `mscpe_after_expire_post` / `mscpe_before_process_expired_posts` / `mscpe_after_process_expired_posts` action hooks now fire from the consolidated pipeline (previously legacy-cron only).
+
+### Changed
+
+- Classic editor metabox now stores only the unified `_mscpe_expiry_timestamp` (legacy date/time meta removed on save).
+- Removed creation of the unused `wp_mscpe_rules` database table (rules live in the `mscpe_rules` option); the table is dropped on reactivation and on uninstall.
+- WordPress.org listing rewritten: searchable title and tags, keyword-rich description, expanded 15-question FAQ.
+
 ## [1.5.2] - 2026-07-24
 
 ### Changed

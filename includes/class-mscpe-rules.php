@@ -69,13 +69,14 @@ class Rules {
 		$rules = $this->get_rules();
 
 		$clean = array(
-			'name'             => sanitize_text_field( $rule_data['name'] ),
-			'description'      => sanitize_textarea_field( $rule_data['description'] ),
+			'name'             => sanitize_text_field( isset( $rule_data['name'] ) ? $rule_data['name'] : '' ),
+			'description'      => sanitize_textarea_field( isset( $rule_data['description'] ) ? $rule_data['description'] : '' ),
 			'enabled'          => ! empty( $rule_data['enabled'] ) ? 1 : 0,
+			'priority'         => isset( $rule_data['priority'] ) ? min( 100, max( 1, absint( $rule_data['priority'] ) ) ) : 10,
 			'condition_type'   => sanitize_key( $rule_data['condition_type'] ),
-			'condition_config' => $this->sanitize_condition_config( $rule_data['condition_type'], $rule_data['condition_config'] ),
+			'condition_config' => $this->sanitize_condition_config( $rule_data['condition_type'], isset( $rule_data['condition_config'] ) ? $rule_data['condition_config'] : array() ),
 			'action_type'      => sanitize_key( $rule_data['action_type'] ),
-			'action_config'    => $this->sanitize_action_config( $rule_data['action_type'], $rule_data['action_config'] ),
+			'action_config'    => $this->sanitize_action_config( $rule_data['action_type'], isset( $rule_data['action_config'] ) ? $rule_data['action_config'] : array() ),
 			'updated_at'       => time(),
 		);
 
@@ -211,6 +212,16 @@ class Rules {
 	 */
 	public function evaluate_rules( $post_id ) {
 		$rules = $this->get_rules();
+
+		// Evaluate in priority order: lower number = higher priority.
+		uasort(
+			$rules,
+			static function ( $a, $b ) {
+				$pa = isset( $a['priority'] ) ? (int) $a['priority'] : 10;
+				$pb = isset( $b['priority'] ) ? (int) $b['priority'] : 10;
+				return $pa <=> $pb;
+			}
+		);
 
 		foreach ( $rules as $rule_id => $rule ) {
 			if ( empty( $rule['enabled'] ) ) {

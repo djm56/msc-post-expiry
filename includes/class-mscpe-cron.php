@@ -63,66 +63,76 @@ class Cron {
 	}
 
 	/**
-	 * Process expired posts.
+	 * Cron handler (every 5 minutes).
 	 *
-	 * This is the main cron handler that finds and processes all expired posts.
+	 * Since 1.6.0 the plugin uses a single expiry pipeline (Module). This
+	 * handler migrates any remaining legacy `mscpe_expiry_date`/`mscpe_expiry_time`
+	 * meta to the `_mscpe_expiry_timestamp` meta used by the pipeline, then
+	 * delegates processing to the Module so Smart Rules, per-post overrides,
+	 * SEO handling, notifications and analytics all apply on the 5-minute cadence.
 	 */
 	public function process_expired_posts() {
-		$this->log_event( '=== Cron job started at ' . current_time( 'Y-m-d H:i:s' ) . ' ===' );
-
-		// Check if module is enabled.
 		$module_enabled = $this->plugin->get_option( 'module_enabled', 1 );
-		$this->log_event( 'Module enabled value: ' . wp_json_encode( $module_enabled ) . ' (type: ' . gettype( $module_enabled ) . ')' );
-
-		// Handle both integer 1 and string '1' as enabled.
-		$is_enabled = ! empty( $module_enabled ) || $module_enabled === '1' || $module_enabled === 1;
-		if ( ! $is_enabled ) {
-			$this->log_event( 'Module is disabled, skipping cron processing.' );
+		if ( empty( $module_enabled ) ) {
 			return;
 		}
 
-		/**
-		 * Fires before processing expired posts.
-		 */
-		do_action( 'mscpe_before_process_expired_posts' );
-
-		$expired_posts   = $this->get_expired_posts();
-		$processed_count = 0;
-
-		$this->log_event( 'Found ' . count( $expired_posts ) . ' expired posts to process.' );
-
-		if ( empty( $expired_posts ) ) {
-			$this->log_event( 'No expired posts found.' );
-			do_action( 'mscpe_after_process_expired_posts', 0 );
-			$this->cleanup_old_logs();
-			return;
+		$migrated = $this->migrate_legacy_meta();
+		if ( $migrated > 0 ) {
+			$this->log_event( sprintf( 'Migrated legacy expiry meta on %d posts to timestamp meta.', $migrated ) );
 		}
 
-		$expiry_action = (string) $this->plugin->get_option( 'expiry_action', 'trash' );
-		$this->log_event( 'Expiry action: ' . $expiry_action );
-
-		foreach ( $expired_posts as $post_id ) {
-			$this->log_event( 'Processing post ID: ' . $post_id );
-			$result = $this->expire_post( $post_id, $expiry_action );
-			if ( $result ) {
-				++$processed_count;
-				$this->log_event( 'Successfully expired post ID: ' . $post_id );
-			} else {
-				$this->log_event( 'Failed to expire post ID: ' . $post_id );
-			}
+		$module = $this->plugin->get_module();
+		if ( $module ) {
+			$module->process_expired_posts();
 		}
-
-		$this->log_event( sprintf( 'Processed %d expired posts.', $processed_count ) );
-
-		/**
-		 * Fires after processing expired posts.
-		 *
-		 * @param int $processed_count Number of posts processed.
-		 */
-		do_action( 'mscpe_after_process_expired_posts', $processed_count );
 
 		// Clean up old logs.
 		$this->cleanup_old_logs();
+	}
+
+	/**
+	 * Converts legacy date/time expiry meta to the timestamp meta.
+	 *
+	 * Uses the same strtotime() semantics the classic metabox uses when
+	 * deriving the timestamp, so converted values match metabox-saved ones.
+	 *
+	 * @return int Number of posts migrated.
+	 */
+	private function migrate_legacy_meta() {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$post_ids = $wpdb->get_col(
+			"SELECT DISTINCT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'mscpe_expiry_date' LIMIT 200"
+		);
+
+		if ( empty( $post_ids ) ) {
+			return 0;
+		}
+
+		$migrated = 0;
+
+		foreach ( $post_ids as $post_id ) {
+			$post_id     = (int) $post_id;
+			$expiry_date = (string) get_post_meta( $post_id, 'mscpe_expiry_date', true );
+			$expiry_time = (string) get_post_meta( $post_id, 'mscpe_expiry_time', true );
+
+			$existing_ts = (int) get_post_meta( $post_id, Module::META_KEY_EXPIRY, true );
+
+			if ( $existing_ts <= 0 && '' !== $expiry_date ) {
+				$timestamp = strtotime( $expiry_date . ' ' . ( '' !== $expiry_time ? $expiry_time : '00:00' ) );
+				if ( $timestamp ) {
+					update_post_meta( $post_id, Module::META_KEY_EXPIRY, $timestamp );
+				}
+			}
+
+			delete_post_meta( $post_id, 'mscpe_expiry_date' );
+			delete_post_meta( $post_id, 'mscpe_expiry_time' );
+			++$migrated;
+		}
+
+		return $migrated;
 	}
 
 	/**

@@ -46,6 +46,8 @@ class Module {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
 		add_action( self::CRON_HOOK, array( $this, 'process_expired_posts' ) );
 		add_action( 'template_redirect', array( $this, 'handle_redirect' ) );
+		add_action( 'added_post_meta', array( $this, 'maybe_reset_processed_flag' ), 10, 4 );
+		add_action( 'updated_post_meta', array( $this, 'maybe_reset_processed_flag' ), 10, 4 );
 
 		$post_types = $this->get_post_types();
 		foreach ( $post_types as $post_type ) {
@@ -132,6 +134,50 @@ class Module {
 					},
 				)
 			);
+
+			// Per-post override meta (editable in both editors since 1.6.0).
+			register_post_meta(
+				$post_type,
+				self::META_KEY_ACTION,
+				array(
+					'type'          => 'string',
+					'single'        => true,
+					'show_in_rest'  => true,
+					'default'       => '',
+					'auth_callback' => static function () {
+						return current_user_can( 'edit_posts' );
+					},
+				)
+			);
+
+			register_post_meta(
+				$post_type,
+				self::META_KEY_REDIRECT_URL,
+				array(
+					'type'              => 'string',
+					'single'            => true,
+					'show_in_rest'      => true,
+					'default'           => '',
+					'sanitize_callback' => 'esc_url_raw',
+					'auth_callback'     => static function () {
+						return current_user_can( 'edit_posts' );
+					},
+				)
+			);
+
+			register_post_meta(
+				$post_type,
+				self::META_KEY_EXPIRY_CAT,
+				array(
+					'type'          => 'integer',
+					'single'        => true,
+					'show_in_rest'  => true,
+					'default'       => 0,
+					'auth_callback' => static function () {
+						return current_user_can( 'edit_posts' );
+					},
+				)
+			);
 		}
 	}
 
@@ -162,11 +208,38 @@ class Module {
 			'mscpe-expiry-sidebar',
 			'mscpeExpiryConfig',
 			array(
-				'metaKey' => self::META_KEY_EXPIRY,
-				'title'   => __( 'Post Expiry', 'msc-post-expiry' ),
-				'help'    => __( 'Set a date/time and action. Use the meta box below for redirect URL.', 'msc-post-expiry' ),
-				'label'   => __( 'Expiry date/time (local)', 'msc-post-expiry' ),
+				'metaKey'         => self::META_KEY_EXPIRY,
+				'actionMetaKey'   => self::META_KEY_ACTION,
+				'redirectMetaKey' => self::META_KEY_REDIRECT_URL,
+				'categoryMetaKey' => self::META_KEY_EXPIRY_CAT,
+				'title'           => __( 'Post Expiry', 'msc-post-expiry' ),
+				'help'            => __( 'Set an expiry date/time. Optionally override the action just for this post.', 'msc-post-expiry' ),
+				'label'           => __( 'Expiry date/time (local)', 'msc-post-expiry' ),
+				'actionLabel'     => __( 'Action for this post', 'msc-post-expiry' ),
+				'redirectLabel'   => __( 'Redirect URL', 'msc-post-expiry' ),
+				'categoryLabel'   => __( 'Move to category', 'msc-post-expiry' ),
+				'categoryDefault' => __( '— Select —', 'msc-post-expiry' ),
+				'actions'         => self::get_action_choices(),
 			)
+		);
+	}
+
+	/**
+	 * Per-post expiry action choices (shared by the metabox and block sidebar).
+	 *
+	 * The empty value means "use the global default action".
+	 *
+	 * @return array<string,string>
+	 */
+	public static function get_action_choices() {
+		return array(
+			''              => __( 'Use global default', 'msc-post-expiry' ),
+			'trash'         => __( 'Move to Trash', 'msc-post-expiry' ),
+			'delete'        => __( 'Permanently Delete', 'msc-post-expiry' ),
+			'draft'         => __( 'Change to Draft', 'msc-post-expiry' ),
+			'private'       => __( 'Change to Private', 'msc-post-expiry' ),
+			'category'      => __( 'Move to Category', 'msc-post-expiry' ),
+			'redirect_only' => __( 'Redirect Only', 'msc-post-expiry' ),
 		);
 	}
 
@@ -206,6 +279,28 @@ class Module {
 	}
 
 	/**
+	 * Resets the processed flag when a post is given a new future expiry date.
+	 *
+	 * Runs on added_post_meta/updated_post_meta so rescheduling via the block
+	 * editor sidebar (which only writes the timestamp meta) re-arms processing.
+	 *
+	 * @param int    $meta_id    Meta row ID.
+	 * @param int    $post_id    Post ID.
+	 * @param string $meta_key   Meta key.
+	 * @param mixed  $meta_value New meta value.
+	 * @return void
+	 */
+	public function maybe_reset_processed_flag( $meta_id, $post_id, $meta_key, $meta_value ) {
+		if ( self::META_KEY_EXPIRY !== $meta_key ) {
+			return;
+		}
+
+		if ( (int) $meta_value > time() && (bool) get_post_meta( $post_id, self::META_KEY_PROCESSED, true ) ) {
+			update_post_meta( $post_id, self::META_KEY_PROCESSED, 0 );
+		}
+	}
+
+	/**
 	 * Cron callback: queries and processes all expired posts.
 	 *
 	 * @return void
@@ -215,11 +310,17 @@ class Module {
 			return;
 		}
 
+		/**
+		 * Fires before processing expired posts.
+		 */
+		do_action( 'mscpe_before_process_expired_posts' );
+
 		// Send expiry notifications first.
 		$this->send_expiry_notifications();
 
 		$post_types = $this->get_post_types();
 		if ( empty( $post_types ) ) {
+			do_action( 'mscpe_after_process_expired_posts', 0 );
 			return;
 		}
 
@@ -247,12 +348,14 @@ class Module {
 		);
 
 		if ( empty( $query->posts ) ) {
+			do_action( 'mscpe_after_process_expired_posts', 0 );
 			return;
 		}
 
-		$seo       = $this->plugin->get_seo();
-		$rules     = $this->plugin->get_rules();
-		$analytics = $this->plugin->get_analytics();
+		$seo             = $this->plugin->get_seo();
+		$rules           = $this->plugin->get_rules();
+		$analytics       = $this->plugin->get_analytics();
+		$processed_count = 0;
 
 		foreach ( $query->posts as $post_id ) {
 			if ( (bool) get_post_meta( $post_id, self::META_KEY_PROCESSED, true ) ) {
@@ -263,6 +366,9 @@ class Module {
 			if ( $rules ) {
 				$rule_result = $rules->evaluate_rules( $post_id );
 				if ( null !== $rule_result ) {
+					/** This action is documented below. */
+					do_action( 'mscpe_before_expire_post', $post_id, $rule_result['action_type'] );
+
 					$result = $rules->apply_rule_action( $post_id, $rule_result );
 					if ( $result ) {
 						update_post_meta( $post_id, self::META_KEY_PROCESSED, 1 );
@@ -273,6 +379,10 @@ class Module {
 						if ( $seo ) {
 							$seo->apply_seo_on_expiry( $post_id );
 						}
+						++$processed_count;
+
+						/** This action is documented below. */
+						do_action( 'mscpe_after_expire_post', $post_id, $rule_result['action_type'], $result );
 					}
 					continue;
 				}
@@ -284,6 +394,14 @@ class Module {
 				$action = (string) $this->plugin->get_option( 'expiry_action', 'trash' );
 			}
 
+			/**
+			 * Fires before expiring a post.
+			 *
+			 * @param int    $post_id Post ID.
+			 * @param string $action  Expiry action.
+			 */
+			do_action( 'mscpe_before_expire_post', $post_id, $action );
+
 			$result = $this->apply_action( $post_id, $action );
 			if ( $result ) {
 				update_post_meta( $post_id, self::META_KEY_PROCESSED, 1 );
@@ -294,10 +412,27 @@ class Module {
 				if ( $seo ) {
 					$seo->apply_seo_on_expiry( $post_id );
 				}
+				++$processed_count;
+
+				/**
+				 * Fires after a post has been expired.
+				 *
+				 * @param int    $post_id Post ID.
+				 * @param string $action  Expiry action.
+				 * @param mixed  $result  Result of the action.
+				 */
+				do_action( 'mscpe_after_expire_post', $post_id, $action, $result );
 			}
 		}
 
 		wp_reset_postdata();
+
+		/**
+		 * Fires after processing expired posts.
+		 *
+		 * @param int $processed_count Number of posts processed.
+		 */
+		do_action( 'mscpe_after_process_expired_posts', $processed_count );
 	}
 
 	/**

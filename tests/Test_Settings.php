@@ -166,6 +166,6 @@ class Test_Settings extends MSCPE_Test_Case {
 		$this->settings->render_support_tab();
 		$output = ob_get_clean();
 
-		$this->assertStringContainsString( 'https://anomalous.co.za', $output );
+		$this->assertStringContainsString( 'https://wordpress.org/support/plugin/msc-post-expiry/', $output );
 	}
 }

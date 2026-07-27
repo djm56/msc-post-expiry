@@ -521,12 +521,15 @@ class Settings {
 
 			<hr style="margin:2em 0;" />
 
-			<h2><?php esc_html_e( 'Need Help?', 'msc-post-expiry' ); ?></h2>
-			<p><?php esc_html_e( 'If you have questions, encounter bugs, or need setup assistance, we\'re here to help.', 'msc-post-expiry' ); ?></p>
+			<h2><?php esc_html_e( 'Support', 'msc-post-expiry' ); ?></h2>
 			<p>
-				<a class="button" href="https://anomalous.co.za" target="_blank" rel="noopener noreferrer">
-					<?php esc_html_e( 'Get Support', 'msc-post-expiry' ); ?>
-				</a>
+				<?php
+				printf(
+					/* translators: %s is the URL to the plugin support forum on WordPress.org. */
+					wp_kses_post( __( 'Need a hand? Visit the <a href="%s" target="_blank" rel="noopener noreferrer">plugin support forum on WordPress.org</a> for help, bug reports and feature requests.', 'msc-post-expiry' ) ),
+					esc_url( 'https://wordpress.org/support/plugin/msc-post-expiry/' )
+				);
+				?>
 			</p>
 
 		</div>
@@ -612,6 +615,47 @@ class Settings {
 			<p class="description" style="margin-top:8px;font-size:12px;color:#666;">
 				<?php esc_html_e( 'Leave empty to disable expiry for this post.', 'msc-post-expiry' ); ?>
 			</p>
+
+			<?php
+			$action_val   = (string) get_post_meta( $post->ID, '_mscpe_expiry_action', true );
+			$redirect_val = (string) get_post_meta( $post->ID, '_mscpe_expiry_redirect_url', true );
+			$category_val = (int) get_post_meta( $post->ID, '_mscpe_expiry_category', true );
+			?>
+			<label for="mscpe_expiry_action" style="display:block;margin-top:12px;margin-bottom:8px;">
+				<strong><?php esc_html_e( 'Action for this post', 'msc-post-expiry' ); ?></strong>
+			</label>
+			<select id="mscpe_expiry_action" name="mscpe_expiry_action" style="width:100%;padding:6px;box-sizing:border-box;">
+				<?php foreach ( \MSCPE\Module::get_action_choices() as $value => $label ) : ?>
+					<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $action_val, $value ); ?>><?php echo esc_html( $label ); ?></option>
+				<?php endforeach; ?>
+			</select>
+
+			<label for="mscpe_expiry_redirect_url" style="display:block;margin-top:8px;margin-bottom:8px;">
+				<strong><?php esc_html_e( 'Redirect URL', 'msc-post-expiry' ); ?></strong>
+			</label>
+			<input type="url" id="mscpe_expiry_redirect_url" name="mscpe_expiry_redirect_url" value="<?php echo esc_attr( $redirect_val ); ?>" placeholder="https://example.com/" style="width:100%;padding:6px;box-sizing:border-box;" />
+			<p class="description" style="margin-top:4px;font-size:12px;color:#666;">
+				<?php esc_html_e( 'Used when the action is "Redirect Only".', 'msc-post-expiry' ); ?>
+			</p>
+
+			<label for="mscpe_expiry_category" style="display:block;margin-top:8px;margin-bottom:8px;">
+				<strong><?php esc_html_e( 'Move to category', 'msc-post-expiry' ); ?></strong>
+			</label>
+			<?php
+			wp_dropdown_categories(
+				array(
+					'id'               => 'mscpe_expiry_category',
+					'name'             => 'mscpe_expiry_category',
+					'selected'         => $category_val,
+					'show_option_none' => __( '— Select —', 'msc-post-expiry' ),
+					'option_none_value' => 0,
+					'hide_empty'       => 0,
+				)
+			);
+			?>
+			<p class="description" style="margin-top:4px;font-size:12px;color:#666;">
+				<?php esc_html_e( 'Used when the action is "Move to Category" (posts only).', 'msc-post-expiry' ); ?>
+			</p>
 		</div>
 		<?php
 	}
@@ -659,20 +703,45 @@ class Settings {
 		}
 
 		if ( $expiry_date ) {
-			update_post_meta( $post_id, 'mscpe_expiry_date', $expiry_date );
-			update_post_meta( $post_id, 'mscpe_expiry_time', $expiry_time );
-
-			// Always store a unified timestamp when a date is provided.
+			// Store the unified timestamp — the single source of truth since 1.6.0.
 			// Default time to '00:00' so posts without a time still expire at midnight.
 			$effective_time = $expiry_time ?: '00:00';
 			$timestamp      = strtotime( $expiry_date . ' ' . $effective_time );
 			if ( false !== $timestamp ) {
 				update_post_meta( $post_id, '_mscpe_expiry_timestamp', $timestamp );
+				update_post_meta( $post_id, '_mscpe_expiry_processed', 0 );
 			}
 		} else {
-			delete_post_meta( $post_id, 'mscpe_expiry_date' );
-			delete_post_meta( $post_id, 'mscpe_expiry_time' );
 			delete_post_meta( $post_id, '_mscpe_expiry_timestamp' );
+		}
+
+		// Clear any legacy date/time meta (migrated to the timestamp).
+		delete_post_meta( $post_id, 'mscpe_expiry_date' );
+		delete_post_meta( $post_id, 'mscpe_expiry_time' );
+
+		// Per-post overrides.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Already verified above.
+		$action = isset( $_POST['mscpe_expiry_action'] ) ? sanitize_key( wp_unslash( $_POST['mscpe_expiry_action'] ) ) : '';
+		if ( '' !== $action && array_key_exists( $action, \MSCPE\Module::get_action_choices() ) ) {
+			update_post_meta( $post_id, '_mscpe_expiry_action', $action );
+		} else {
+			delete_post_meta( $post_id, '_mscpe_expiry_action' );
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Already verified above.
+		$redirect_url = isset( $_POST['mscpe_expiry_redirect_url'] ) ? esc_url_raw( wp_unslash( $_POST['mscpe_expiry_redirect_url'] ) ) : '';
+		if ( '' !== $redirect_url ) {
+			update_post_meta( $post_id, '_mscpe_expiry_redirect_url', $redirect_url );
+		} else {
+			delete_post_meta( $post_id, '_mscpe_expiry_redirect_url' );
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Already verified above.
+		$category = isset( $_POST['mscpe_expiry_category'] ) ? absint( wp_unslash( $_POST['mscpe_expiry_category'] ) ) : 0;
+		if ( $category > 0 ) {
+			update_post_meta( $post_id, '_mscpe_expiry_category', $category );
+		} else {
+			delete_post_meta( $post_id, '_mscpe_expiry_category' );
 		}
 	}
 
@@ -772,15 +841,29 @@ class Settings {
 		if ( isset( $_POST['mscpe_rules_nonce'] ) ) {
 			$nonce = sanitize_text_field( wp_unslash( $_POST['mscpe_rules_nonce'] ) );
 			if ( wp_verify_nonce( $nonce, 'mscpe_rules_settings' ) && current_user_can( 'manage_options' ) ) {
-				$rule_data = array(
-					'condition_type'  => isset( $_POST['condition_type'] ) ? sanitize_key( wp_unslash( $_POST['condition_type'] ) ) : '',
-					'condition_value' => isset( $_POST['condition_value'] ) ? sanitize_text_field( wp_unslash( $_POST['condition_value'] ) ) : '',
-					'action_type'     => isset( $_POST['action_type'] ) ? sanitize_key( wp_unslash( $_POST['action_type'] ) ) : '',
-					'action_value'    => isset( $_POST['action_value'] ) ? sanitize_text_field( wp_unslash( $_POST['action_value'] ) ) : '',
-					'priority'        => isset( $_POST['priority'] ) ? absint( wp_unslash( $_POST['priority'] ) ) : 10,
-				);
-				$rules->save_rule( $rule_data );
-				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Rule saved.', 'msc-post-expiry' ) . '</p></div>';
+				$condition_type  = isset( $_POST['condition_type'] ) ? sanitize_key( wp_unslash( $_POST['condition_type'] ) ) : '';
+				$condition_value = isset( $_POST['condition_value'] ) ? sanitize_text_field( wp_unslash( $_POST['condition_value'] ) ) : '';
+				$action_type     = isset( $_POST['action_type'] ) ? sanitize_key( wp_unslash( $_POST['action_type'] ) ) : '';
+				$action_value    = isset( $_POST['action_value'] ) ? sanitize_text_field( wp_unslash( $_POST['action_value'] ) ) : '';
+
+				$condition_config = $this->build_condition_config( $condition_type, $condition_value );
+
+				if ( null === $condition_config ) {
+					echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Rule not saved: the condition value could not be resolved. Check the expected format for the selected condition.', 'msc-post-expiry' ) . '</p></div>';
+				} else {
+					$rule_data = array(
+						'name'             => isset( $_POST['rule_name'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_name'] ) ) : '',
+						'description'      => '',
+						'enabled'          => isset( $_POST['rule_enabled'] ) ? 1 : 0,
+						'priority'         => isset( $_POST['priority'] ) ? absint( wp_unslash( $_POST['priority'] ) ) : 10,
+						'condition_type'   => $condition_type,
+						'condition_config' => $condition_config,
+						'action_type'      => $action_type,
+						'action_config'    => $this->build_action_config( $action_type, $action_value ),
+					);
+					$rules->save_rule( $rule_data );
+					echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Rule saved.', 'msc-post-expiry' ) . '</p></div>';
+				}
 			}
 		}
 
@@ -800,24 +883,42 @@ class Settings {
 			<h2><?php esc_html_e( 'Smart Expiry Rules', 'msc-post-expiry' ); ?></h2>
 			<p><?php esc_html_e( 'Smart Rules automatically determine what happens when a post expires based on its properties — like category, tag, author, age, or custom fields. When a post expires, the plugin checks these rules in priority order. If a rule matches, its action overrides the default expiry action.', 'msc-post-expiry' ); ?></p>
 
+			<?php
+			$condition_types = Rule_Evaluator::get_condition_types();
+			$action_types    = Rules::get_action_types();
+			?>
 			<?php if ( ! empty( $all_rules ) ) : ?>
 				<table class="widefat" style="margin-bottom:2em;">
 					<thead>
 						<tr>
+							<th><?php esc_html_e( 'Rule', 'msc-post-expiry' ); ?></th>
 							<th><?php esc_html_e( 'Priority', 'msc-post-expiry' ); ?></th>
 							<th><?php esc_html_e( 'Condition', 'msc-post-expiry' ); ?></th>
-							<th><?php esc_html_e( 'Value', 'msc-post-expiry' ); ?></th>
 							<th><?php esc_html_e( 'Action', 'msc-post-expiry' ); ?></th>
+							<th><?php esc_html_e( 'Status', 'msc-post-expiry' ); ?></th>
 							<th></th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php foreach ( $all_rules as $index => $rule ) : ?>
+							<?php
+							$type_key       = isset( $rule['condition_type'] ) ? $rule['condition_type'] : '';
+							$action_key     = isset( $rule['action_type'] ) ? $rule['action_type'] : '';
+							$condition_text = isset( $condition_types[ $type_key ] ) ? $condition_types[ $type_key ] : $type_key;
+							$summary        = $this->summarize_rule_condition( $rule );
+							?>
 							<tr>
+								<td><?php echo esc_html( ! empty( $rule['name'] ) ? $rule['name'] : sprintf( /* translators: %d: rule number. */ __( 'Rule %d', 'msc-post-expiry' ), $index + 1 ) ); ?></td>
 								<td><?php echo esc_html( $rule['priority'] ?? 10 ); ?></td>
-								<td><?php echo esc_html( $rule['condition_type'] ?? '' ); ?></td>
-								<td><?php echo esc_html( $rule['condition_value'] ?? '' ); ?></td>
-								<td><?php echo esc_html( $rule['action_type'] ?? '' ); ?></td>
+								<td><?php echo esc_html( $condition_text . ( $summary ? ': ' . $summary : '' ) ); ?></td>
+								<td><?php echo esc_html( isset( $action_types[ $action_key ] ) ? $action_types[ $action_key ] : $action_key ); ?></td>
+								<td>
+									<?php if ( ! empty( $rule['enabled'] ) ) : ?>
+										<?php esc_html_e( 'Enabled', 'msc-post-expiry' ); ?>
+									<?php else : ?>
+										<strong style="color:#b32d2e;"><?php esc_html_e( 'Disabled', 'msc-post-expiry' ); ?></strong>
+									<?php endif; ?>
+								</td>
 								<td>
 									<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'page' => 'mscpe-settings', 'tab' => 'rules', 'delete_rule' => $index ), admin_url( 'options-general.php' ) ), 'mscpe_delete_rule' ) ); ?>" class="button button-small" onclick="return confirm('<?php esc_attr_e( 'Delete this rule?', 'msc-post-expiry' ); ?>');">
 										<?php esc_html_e( 'Delete', 'msc-post-expiry' ); ?>
@@ -835,14 +936,19 @@ class Settings {
 				<table class="form-table" role="presentation">
 					<tbody>
 						<tr>
+							<th scope="row"><label for="rule_name"><?php esc_html_e( 'Rule Name', 'msc-post-expiry' ); ?></label></th>
+							<td>
+								<input type="text" id="rule_name" name="rule_name" class="regular-text" />
+								<p class="description"><?php esc_html_e( 'Optional — a short label so you can recognise the rule later.', 'msc-post-expiry' ); ?></p>
+							</td>
+						</tr>
+						<tr>
 							<th scope="row"><label for="condition_type"><?php esc_html_e( 'Condition', 'msc-post-expiry' ); ?></label></th>
 							<td>
 								<select id="condition_type" name="condition_type">
-									<option value="category"><?php esc_html_e( 'Category', 'msc-post-expiry' ); ?></option>
-									<option value="tag"><?php esc_html_e( 'Tag', 'msc-post-expiry' ); ?></option>
-									<option value="author"><?php esc_html_e( 'Author', 'msc-post-expiry' ); ?></option>
-									<option value="age"><?php esc_html_e( 'Post Age (days)', 'msc-post-expiry' ); ?></option>
-									<option value="custom_field"><?php esc_html_e( 'Custom Field', 'msc-post-expiry' ); ?></option>
+									<?php foreach ( $condition_types as $value => $label ) : ?>
+										<option value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $label ); ?></option>
+									<?php endforeach; ?>
 								</select>
 							</td>
 						</tr>
@@ -850,19 +956,16 @@ class Settings {
 							<th scope="row"><label for="condition_value"><?php esc_html_e( 'Condition Value', 'msc-post-expiry' ); ?></label></th>
 							<td>
 								<input type="text" id="condition_value" name="condition_value" class="regular-text" />
-								<p class="description"><?php esc_html_e( 'Category/tag slug, author login, days number, or field_name=value.', 'msc-post-expiry' ); ?></p>
+								<p class="description"><?php esc_html_e( 'Category/tag slug or ID; author login or ID; minimum days for Post Age; a number or "min-max" range for Comment Count and Post Views; "field_name=value" (or just "field_name" for exists) for Custom Field.', 'msc-post-expiry' ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<th scope="row"><label for="action_type"><?php esc_html_e( 'Action', 'msc-post-expiry' ); ?></label></th>
 							<td>
 								<select id="action_type" name="action_type">
-									<option value="draft"><?php esc_html_e( 'Change to Draft', 'msc-post-expiry' ); ?></option>
-									<option value="trash"><?php esc_html_e( 'Move to Trash', 'msc-post-expiry' ); ?></option>
-									<option value="private"><?php esc_html_e( 'Change to Private', 'msc-post-expiry' ); ?></option>
-									<option value="category"><?php esc_html_e( 'Move to Category', 'msc-post-expiry' ); ?></option>
-									<option value="redirect"><?php esc_html_e( 'Redirect', 'msc-post-expiry' ); ?></option>
-									<option value="delete"><?php esc_html_e( 'Permanently Delete', 'msc-post-expiry' ); ?></option>
+									<?php foreach ( $action_types as $value => $label ) : ?>
+										<option value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $label ); ?></option>
+									<?php endforeach; ?>
 								</select>
 							</td>
 						</tr>
@@ -870,14 +973,23 @@ class Settings {
 							<th scope="row"><label for="action_value"><?php esc_html_e( 'Action Value', 'msc-post-expiry' ); ?></label></th>
 							<td>
 								<input type="text" id="action_value" name="action_value" class="regular-text" />
-								<p class="description"><?php esc_html_e( 'Category ID for "Move to Category", URL for "Redirect". Optional for other actions.', 'msc-post-expiry' ); ?></p>
+								<p class="description"><?php esc_html_e( 'Category ID or slug for "Move to Category", URL for "Set Redirect URL". Not used by other actions.', 'msc-post-expiry' ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<th scope="row"><label for="priority"><?php esc_html_e( 'Priority', 'msc-post-expiry' ); ?></label></th>
 							<td>
 								<input type="number" id="priority" name="priority" value="10" min="1" max="100" style="width:80px;" />
-								<p class="description"><?php esc_html_e( 'Lower number = higher priority.', 'msc-post-expiry' ); ?></p>
+								<p class="description"><?php esc_html_e( 'Lower number = higher priority. The first matching rule wins.', 'msc-post-expiry' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Enabled', 'msc-post-expiry' ); ?></th>
+							<td>
+								<label for="rule_enabled">
+									<input type="checkbox" id="rule_enabled" name="rule_enabled" value="1" checked="checked" />
+									<?php esc_html_e( 'Rule is active immediately after saving', 'msc-post-expiry' ); ?>
+								</label>
 							</td>
 						</tr>
 					</tbody>
@@ -886,6 +998,185 @@ class Settings {
 			</form>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Builds a condition config array from the simple form value.
+	 *
+	 * @param string $condition_type  Condition type.
+	 * @param string $condition_value Raw form value.
+	 * @return array|null Config array, or null when the value cannot be resolved.
+	 */
+	private function build_condition_config( $condition_type, $condition_value ) {
+		$condition_value = trim( $condition_value );
+
+		switch ( $condition_type ) {
+			case 'category':
+				$term = get_term_by( is_numeric( $condition_value ) ? 'id' : 'slug', $condition_value, 'category' );
+				return $term ? array( 'category_ids' => array( (int) $term->term_id ) ) : null;
+
+			case 'tag':
+				$term = get_term_by( is_numeric( $condition_value ) ? 'id' : 'slug', $condition_value, 'post_tag' );
+				return $term ? array( 'tag_ids' => array( (int) $term->term_id ) ) : null;
+
+			case 'author':
+				$user = is_numeric( $condition_value ) ? get_user_by( 'id', (int) $condition_value ) : get_user_by( 'login', $condition_value );
+				return $user ? array( 'author_ids' => array( (int) $user->ID ) ) : null;
+
+			case 'age':
+				$days = absint( $condition_value );
+				return $days > 0 ? array( 'min_days' => $days ) : null;
+
+			case 'comments':
+			case 'views':
+				$range = $this->parse_min_max( $condition_value );
+				if ( null === $range ) {
+					return null;
+				}
+				return 'comments' === $condition_type
+					? array(
+						'min_comments' => $range[0],
+						'max_comments' => $range[1],
+					)
+					: array(
+						'min_views' => $range[0],
+						'max_views' => $range[1],
+					);
+
+			case 'custom_field':
+				if ( '' === $condition_value ) {
+					return null;
+				}
+				if ( false !== strpos( $condition_value, '=' ) ) {
+					list( $field_name, $field_value ) = array_map( 'trim', explode( '=', $condition_value, 2 ) );
+					if ( '' === $field_name ) {
+						return null;
+					}
+					return array(
+						'field_name'  => $field_name,
+						'field_value' => $field_value,
+						'compare'     => 'equals',
+					);
+				}
+				return array(
+					'field_name'  => $condition_value,
+					'field_value' => '',
+					'compare'     => 'exists',
+				);
+
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Parses a "min" or "min-max" numeric string.
+	 *
+	 * @param string $value Raw value.
+	 * @return array{0:int,1:int}|null [min, max] (0 = unbounded), or null when invalid.
+	 */
+	private function parse_min_max( $value ) {
+		if ( preg_match( '/^(\d+)\s*-\s*(\d+)$/', $value, $m ) ) {
+			return array( (int) $m[1], (int) $m[2] );
+		}
+		if ( is_numeric( $value ) ) {
+			return array( (int) $value, 0 );
+		}
+		return null;
+	}
+
+	/**
+	 * Builds an action config array from the simple form value.
+	 *
+	 * @param string $action_type  Action type.
+	 * @param string $action_value Raw form value.
+	 * @return array
+	 */
+	private function build_action_config( $action_type, $action_value ) {
+		$action_value = trim( $action_value );
+
+		switch ( $action_type ) {
+			case 'category':
+				if ( is_numeric( $action_value ) ) {
+					return array( 'category_id' => absint( $action_value ) );
+				}
+				$term = get_term_by( 'slug', $action_value, 'category' );
+				return array( 'category_id' => $term ? (int) $term->term_id : 0 );
+
+			case 'redirect':
+				return array( 'redirect_url' => esc_url_raw( $action_value ) );
+
+			default:
+				return array();
+		}
+	}
+
+	/**
+	 * Human-readable one-line summary of a rule condition config.
+	 *
+	 * @param array $rule Stored rule.
+	 * @return string
+	 */
+	private function summarize_rule_condition( $rule ) {
+		$config = isset( $rule['condition_config'] ) && is_array( $rule['condition_config'] ) ? $rule['condition_config'] : array();
+		$type   = isset( $rule['condition_type'] ) ? $rule['condition_type'] : '';
+
+		switch ( $type ) {
+			case 'category':
+			case 'tag':
+				$key      = 'category' === $type ? 'category_ids' : 'tag_ids';
+				$taxonomy = 'category' === $type ? 'category' : 'post_tag';
+				$ids      = isset( $config[ $key ] ) ? (array) $config[ $key ] : array();
+				$names    = array();
+				foreach ( $ids as $id ) {
+					$term    = get_term( (int) $id, $taxonomy );
+					$names[] = ( $term && ! is_wp_error( $term ) ) ? $term->name : "#$id";
+				}
+				return implode( ', ', $names );
+
+			case 'author':
+				$ids   = isset( $config['author_ids'] ) ? (array) $config['author_ids'] : array();
+				$names = array();
+				foreach ( $ids as $id ) {
+					$user    = get_user_by( 'id', (int) $id );
+					$names[] = $user ? $user->user_login : "#$id";
+				}
+				return implode( ', ', $names );
+
+			case 'age':
+				return isset( $config['min_days'] ) && $config['min_days'] > 0
+					/* translators: %d: number of days. */
+					? sprintf( __( '≥ %d days old', 'msc-post-expiry' ), (int) $config['min_days'] )
+					: '';
+
+			case 'comments':
+			case 'views':
+				$prefix = 'comments' === $type ? 'min_comments' : 'min_views';
+				$suffix = 'comments' === $type ? 'max_comments' : 'max_views';
+				$min    = isset( $config[ $prefix ] ) ? (int) $config[ $prefix ] : 0;
+				$max    = isset( $config[ $suffix ] ) ? (int) $config[ $suffix ] : 0;
+				if ( $min > 0 && $max > 0 ) {
+					return "$min – $max";
+				}
+				if ( $min > 0 ) {
+					/* translators: %d: minimum count. */
+					return sprintf( __( '≥ %d', 'msc-post-expiry' ), $min );
+				}
+				if ( $max > 0 ) {
+					/* translators: %d: maximum count. */
+					return sprintf( __( '≤ %d', 'msc-post-expiry' ), $max );
+				}
+				return '';
+
+			case 'custom_field':
+				$field   = isset( $config['field_name'] ) ? $config['field_name'] : '';
+				$value   = isset( $config['field_value'] ) ? $config['field_value'] : '';
+				$compare = isset( $config['compare'] ) ? $config['compare'] : 'equals';
+				return 'exists' === $compare ? "$field (exists)" : "$field = $value";
+
+			default:
+				return '';
+		}
 	}
 
 	/**
