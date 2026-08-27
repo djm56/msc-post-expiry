@@ -1,10 +1,10 @@
 # MSC Post Expiry
 
-![Version](https://img.shields.io/badge/version-1.7.0-blue)
+![Version](https://img.shields.io/badge/version-1.7.1-blue)
 ![License](https://img.shields.io/badge/license-GPL--2.0%2B-green)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple)
 ![WordPress](https://img.shields.io/badge/WordPress-5.9%2B-blue)
-![Tested up to](https://img.shields.io/badge/tested%20up%20to-7.0-blue)
+![Tested up to](https://img.shields.io/badge/tested%20up%20to-7.1-blue)
 
 Automatically expire posts and pages on a scheduled date. Set expiration dates in the post editor and let the plugin handle the rest.
 
@@ -126,7 +126,7 @@ Setup instructions, feature explanations, FAQ, and contact info.
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `MSCPE_PLUGIN_VERSION` | `'1.7.0'` | Current plugin version |
+| `MSCPE_PLUGIN_VERSION` | `'1.7.1'` | Current plugin version |
 | `MSCPE_PLUGIN_FILE` | `__FILE__` | Absolute path to main plugin file |
 | `MSCPE_PLUGIN_DIR` | Plugin directory path | Absolute path to plugin directory |
 | `MSCPE_PLUGIN_URL` | Plugin directory URL | URL to plugin directory |

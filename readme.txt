@@ -2,9 +2,9 @@
 Contributors: djm56
 Tags: expire posts, post expiration, unpublish, content expiration, redirect expired posts
 Requires at least: 5.9
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,6 +137,9 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 
 == Changelog ==
 
+= 1.7.1 =
+* Tested with WordPress 7.1. No functional changes.
+
 = 1.7.0 =
 * Changed: Support now links to the plugin's WordPress.org support forum instead of the old contact button.
 
@@ -231,6 +234,9 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 * Full internationalization support
 
 == Upgrade Notice ==
+
+= 1.7.1 =
+Compatibility update: confirmed tested against WordPress 7.1. No functional changes — safe update.
 
 = 1.6.0 =
 Important fix: Smart Rules created in the admin now actually run, with working priorities. Single consolidated expiry pipeline — all features apply on the 5-minute check. Recommended for all users.
