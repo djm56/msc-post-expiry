@@ -1,6 +1,6 @@
 # MSC Post Expiry
 
-![Version](https://img.shields.io/badge/version-1.7.2-blue)
+![Version](https://img.shields.io/badge/version-1.7.3-blue)
 ![License](https://img.shields.io/badge/license-GPL--2.0%2B-green)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple)
 ![WordPress](https://img.shields.io/badge/WordPress-5.9%2B-blue)
@@ -126,7 +126,7 @@ Setup instructions, feature explanations, FAQ, and contact info.
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `MSCPE_PLUGIN_VERSION` | `'1.7.2'` | Current plugin version |
+| `MSCPE_PLUGIN_VERSION` | `'1.7.3'` | Current plugin version |
 | `MSCPE_PLUGIN_FILE` | `__FILE__` | Absolute path to main plugin file |
 | `MSCPE_PLUGIN_DIR` | Plugin directory path | Absolute path to plugin directory |
 | `MSCPE_PLUGIN_URL` | Plugin directory URL | URL to plugin directory |
