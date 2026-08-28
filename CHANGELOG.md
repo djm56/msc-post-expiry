@@ -2,6 +2,12 @@
 
 All notable changes to MSC Post Expiry are documented in this file.
 
+## [1.7.2] - 2026-08-27
+
+### Changed
+
+- Updated translations: added 8 new languages (Russian, Simplified Chinese, Turkish, Polish, Indonesian, Swedish, Ukrainian, Arabic) and refreshed all 20 bundled locales to 100% string coverage.
+
 ## [1.7.1] - 2026-08-27
 
 ### Changed

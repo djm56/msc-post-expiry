@@ -4,7 +4,7 @@ Tags: expire posts, post expiration, unpublish, content expiration, redirect exp
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.1
+Stable tag: 1.7.2
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,7 +30,7 @@ When the date arrives, choose what happens: move to trash, permanently delete, r
 * Works with any public post type, include or exclude mode
 * Automatic processing via WordPress cron
 * No external services, no tracking — GDPR-friendly
-* Translated into 12 languages
+* Translated into 20 languages
 * Developer-friendly with helper functions and hooks
 
 **Use Cases:**
@@ -119,7 +119,7 @@ Uninstalling deletes all plugin options, rules, the action log, the analytics ta
 
 = What languages are supported? =
 
-The plugin includes translations for 12 languages: German (Germany and Switzerland), Spanish (Spain and Mexico), French (France and Canada), Italian, Japanese, Dutch (Netherlands and Belgium), and Portuguese (Portugal and Brazil).
+The plugin includes translations for 20 languages: German (Germany and Switzerland), Spanish (Spain and Mexico), French (France and Canada), Italian, Japanese, Dutch (Netherlands and Belgium), Portuguese (Portugal and Brazil), Russian (Russia), Simplified Chinese (China), Turkish (Turkey), Polish (Poland), Indonesian (Indonesia), Swedish (Sweden), Ukrainian, and Arabic.
 
 == Installation ==
 
@@ -136,6 +136,9 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 4. Expiry action history — a log of recent automatic expiry actions with the post, action taken, and date.
 
 == Changelog ==
+
+= 1.7.2 =
+* Translation maintenance: added 8 new languages (Russian, Simplified Chinese, Turkish, Polish, Indonesian, Swedish, Ukrainian, Arabic) — now 20 locales bundled, all at 100% string coverage. No functional changes.
 
 = 1.7.1 =
 * Tested with WordPress 7.1. No functional changes.
@@ -234,6 +237,9 @@ The plugin includes translations for 12 languages: German (Germany and Switzerla
 * Full internationalization support
 
 == Upgrade Notice ==
+
+= 1.7.2 =
+Translation maintenance: 8 new languages added (Russian, Simplified Chinese, Turkish, Polish, Indonesian, Swedish, Ukrainian, Arabic) and all 20 bundled locales refreshed to 100% string coverage. No functional changes — safe update.
 
 = 1.7.1 =
 Compatibility update: confirmed tested against WordPress 7.1. No functional changes — safe update.

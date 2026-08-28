@@ -1,6 +1,6 @@
 # MSC Post Expiry
 
-![Version](https://img.shields.io/badge/version-1.7.1-blue)
+![Version](https://img.shields.io/badge/version-1.7.2-blue)
 ![License](https://img.shields.io/badge/license-GPL--2.0%2B-green)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple)
 ![WordPress](https://img.shields.io/badge/WordPress-5.9%2B-blue)
@@ -36,7 +36,7 @@ Automatically expire posts and pages on a scheduled date. Set expiration dates i
 - **Post Type Control** — Include selected post types, or exclude selected types from all public types
 - **Automatic Processing** — WordPress cron checks for expired posts every 5 minutes (date/time) and 15 minutes (timestamp)
 - **Developer-Friendly** — Helper functions, actions, and filters for every stage of the expiry flow
-- **12 Languages** — German (DE/CH), Spanish (ES/MX), French (FR/CA), Italian, Japanese, Dutch (NL/BE), Portuguese (BR/PT)
+- **20 Languages** — German (DE/CH), Spanish (ES/MX), French (FR/CA), Italian, Japanese, Dutch (NL/BE), Portuguese (BR/PT), Russian (RU), Simplified Chinese (CN), Turkish (TR), Polish (PL), Indonesian (ID), Swedish (SE), Ukrainian (UK), Arabic
 
 ## Installation
 
@@ -126,7 +126,7 @@ Setup instructions, feature explanations, FAQ, and contact info.
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| `MSCPE_PLUGIN_VERSION` | `'1.7.1'` | Current plugin version |
+| `MSCPE_PLUGIN_VERSION` | `'1.7.2'` | Current plugin version |
 | `MSCPE_PLUGIN_FILE` | `__FILE__` | Absolute path to main plugin file |
 | `MSCPE_PLUGIN_DIR` | Plugin directory path | Absolute path to plugin directory |
 | `MSCPE_PLUGIN_URL` | Plugin directory URL | URL to plugin directory |
@@ -337,7 +337,7 @@ vendor/bin/phpunit --filter test_rule_matches_category
 
 ### Translations
 
-The plugin ships with 12 translations. To update:
+The plugin ships with 20 translations. To update:
 
 ```bash
 # Regenerate the .pot template from source PHP files (requires WP-CLI)
@@ -347,7 +347,7 @@ composer run i18n:pot
 wp i18n make-mo languages/
 ```
 
-**Supported locales:** de_DE, de_CH, es_ES, es_MX, fr_FR, fr_CA, it_IT, ja, nl_NL, nl_BE, pt_BR, pt_PT
+**Supported locales:** de_DE, de_CH, es_ES, es_MX, fr_FR, fr_CA, it_IT, ja, nl_NL, nl_BE, pt_BR, pt_PT, ru_RU, zh_CN, tr_TR, pl_PL, id_ID, sv_SE, uk, ar
 
 ### Composer Scripts
 
