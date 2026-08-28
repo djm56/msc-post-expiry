@@ -314,6 +314,7 @@ class Settings {
 						<th scope="row"><?php esc_html_e( 'Post types', 'msc-post-expiry' ); ?></th>
 						<td>
 							<fieldset>
+								<legend class="screen-reader-text"><?php esc_html_e( 'Post types', 'msc-post-expiry' ); ?></legend>
 								<?php foreach ( $post_types as $post_type ) : ?>
 									<label style="display:block;margin-bottom:4px;">
 										<input type="checkbox" name="post_types[]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php checked( in_array( $post_type->name, $options['post_types'], true ) ); ?> />
@@ -327,24 +328,24 @@ class Settings {
 					<tr>
 						<th scope="row"><label for="expiry_action"><?php esc_html_e( 'Expiry action', 'msc-post-expiry' ); ?></label></th>
 						<td>
-							<select id="expiry_action" name="expiry_action">
+							<select id="expiry_action" name="expiry_action" aria-describedby="expiry_action-description">
 								<?php foreach ( $expiry_actions as $action_key => $action_label ) : ?>
 									<option value="<?php echo esc_attr( $action_key ); ?>" <?php selected( $action_key, $options['expiry_action'] ); ?>><?php echo esc_html( $action_label ); ?></option>
 								<?php endforeach; ?>
 							</select>
-							<p class="description"><?php esc_html_e( 'What should happen when a post expires.', 'msc-post-expiry' ); ?></p>
+							<p class="description" id="expiry_action-description"><?php esc_html_e( 'What should happen when a post expires.', 'msc-post-expiry' ); ?></p>
 						</td>
 					</tr>
 					<tr id="expiry-category-row">
 						<th scope="row"><label for="expiry_category"><?php esc_html_e( 'Expiry category', 'msc-post-expiry' ); ?></label></th>
 						<td>
-							<select id="expiry_category" name="expiry_category">
+							<select id="expiry_category" name="expiry_category" aria-describedby="expiry_category-description">
 								<option value="0"><?php esc_html_e( 'Select a category', 'msc-post-expiry' ); ?></option>
 								<?php foreach ( $categories as $category ) : ?>
 									<option value="<?php echo esc_attr( $category->term_id ); ?>" <?php selected( (int) $category->term_id, $options['expiry_category'] ); ?>><?php echo esc_html( $category->name ); ?></option>
 								<?php endforeach; ?>
 							</select>
-							<p class="description"><?php esc_html_e( 'Posts will be moved to this category when expired. Only used when "Move to Category" is selected above.', 'msc-post-expiry' ); ?></p>
+							<p class="description" id="expiry_category-description"><?php esc_html_e( 'Posts will be moved to this category when expired. Only used when "Move to Category" is selected above.', 'msc-post-expiry' ); ?></p>
 						</td>
 					</tr>
 				</tbody>
@@ -371,9 +372,9 @@ class Settings {
 					<tr>
 						<th scope="row"><label for="bulk_default_days"><?php esc_html_e( 'Default expiry window', 'msc-post-expiry' ); ?></label></th>
 						<td>
-							<input id="bulk_default_days" type="number" name="bulk_default_days" min="1" max="3650" value="<?php echo esc_attr( (int) $this->plugin->get_option( 'bulk_default_days', 30 ) ); ?>" style="width:80px;" />
+							<input id="bulk_default_days" type="number" name="bulk_default_days" min="1" max="3650" value="<?php echo esc_attr( (int) $this->plugin->get_option( 'bulk_default_days', 30 ) ); ?>" style="width:80px;" aria-describedby="bulk_default_days-description" />
 							<?php esc_html_e( 'days from now', 'msc-post-expiry' ); ?>
-							<p class="description"><?php esc_html_e( 'Used when bulk-scheduling expiry from the Posts list.', 'msc-post-expiry' ); ?></p>
+							<p class="description" id="bulk_default_days-description"><?php esc_html_e( 'Used when bulk-scheduling expiry from the Posts list.', 'msc-post-expiry' ); ?></p>
 						</td>
 					</tr>
 				</tbody>
@@ -394,8 +395,8 @@ class Settings {
 					<tr>
 						<th scope="row"><label for="notify_days_before"><?php esc_html_e( 'Days before expiry', 'msc-post-expiry' ); ?></label></th>
 						<td>
-							<input id="notify_days_before" type="number" name="notify_days_before" min="1" max="30" value="<?php echo esc_attr( (int) $this->plugin->get_option( 'notify_days_before', 3 ) ); ?>" style="width:80px;" />
-							<p class="description"><?php esc_html_e( 'Send notification this many days before a post expires.', 'msc-post-expiry' ); ?></p>
+							<input id="notify_days_before" type="number" name="notify_days_before" min="1" max="30" value="<?php echo esc_attr( (int) $this->plugin->get_option( 'notify_days_before', 3 ) ); ?>" style="width:80px;" aria-describedby="notify_days_before-description" />
+							<p class="description" id="notify_days_before-description"><?php esc_html_e( 'Send notification this many days before a post expires.', 'msc-post-expiry' ); ?></p>
 						</td>
 					</tr>
 					<tr>
@@ -605,14 +606,14 @@ class Settings {
 			<label for="mscpe_expiry_date" style="display:block;margin-bottom:8px;">
 				<strong><?php esc_html_e( 'Expiry Date', 'msc-post-expiry' ); ?></strong>
 			</label>
-			<input type="date" id="mscpe_expiry_date" name="mscpe_expiry_date" value="<?php echo esc_attr( $expiry_date_val ); ?>" style="width:100%;padding:6px;box-sizing:border-box;" />
+			<input type="date" id="mscpe_expiry_date" name="mscpe_expiry_date" value="<?php echo esc_attr( $expiry_date_val ); ?>" style="width:100%;padding:6px;box-sizing:border-box;" aria-describedby="mscpe_expiry_datetime-description" />
 
 			<label for="mscpe_expiry_time" style="display:block;margin-top:8px;margin-bottom:8px;">
 				<strong><?php esc_html_e( 'Expiry Time', 'msc-post-expiry' ); ?></strong>
 			</label>
-			<input type="time" id="mscpe_expiry_time" name="mscpe_expiry_time" value="<?php echo esc_attr( $expiry_time_val ); ?>" style="width:100%;padding:6px;box-sizing:border-box;" />
+			<input type="time" id="mscpe_expiry_time" name="mscpe_expiry_time" value="<?php echo esc_attr( $expiry_time_val ); ?>" style="width:100%;padding:6px;box-sizing:border-box;" aria-describedby="mscpe_expiry_datetime-description" />
 
-			<p class="description" style="margin-top:8px;font-size:12px;color:#666;">
+			<p class="description" id="mscpe_expiry_datetime-description" style="margin-top:8px;font-size:12px;color:#666;">
 				<?php esc_html_e( 'Leave empty to disable expiry for this post.', 'msc-post-expiry' ); ?>
 			</p>
 
@@ -633,8 +634,8 @@ class Settings {
 			<label for="mscpe_expiry_redirect_url" style="display:block;margin-top:8px;margin-bottom:8px;">
 				<strong><?php esc_html_e( 'Redirect URL', 'msc-post-expiry' ); ?></strong>
 			</label>
-			<input type="url" id="mscpe_expiry_redirect_url" name="mscpe_expiry_redirect_url" value="<?php echo esc_attr( $redirect_val ); ?>" placeholder="https://example.com/" style="width:100%;padding:6px;box-sizing:border-box;" />
-			<p class="description" style="margin-top:4px;font-size:12px;color:#666;">
+			<input type="url" id="mscpe_expiry_redirect_url" name="mscpe_expiry_redirect_url" value="<?php echo esc_attr( $redirect_val ); ?>" placeholder="https://example.com/" style="width:100%;padding:6px;box-sizing:border-box;" aria-describedby="mscpe_expiry_redirect_url-description" />
+			<p class="description" id="mscpe_expiry_redirect_url-description" style="margin-top:4px;font-size:12px;color:#666;">
 				<?php esc_html_e( 'Used when the action is "Redirect Only".', 'msc-post-expiry' ); ?>
 			</p>
 
@@ -653,7 +654,7 @@ class Settings {
 				)
 			);
 			?>
-			<p class="description" style="margin-top:4px;font-size:12px;color:#666;">
+			<p class="description" id="mscpe_expiry_category-description" style="margin-top:4px;font-size:12px;color:#666;">
 				<?php esc_html_e( 'Used when the action is "Move to Category" (posts only).', 'msc-post-expiry' ); ?>
 			</p>
 		</div>
@@ -812,11 +813,11 @@ class Settings {
 						<tr>
 							<th scope="row"><label for="status_code"><?php esc_html_e( 'HTTP Status Code', 'msc-post-expiry' ); ?></label></th>
 							<td>
-								<select id="status_code" name="status_code">
+								<select id="status_code" name="status_code" aria-describedby="status_code-description">
 									<option value="200" <?php selected( '200', $seo_options['status_code'] ); ?>>200 OK</option>
 									<option value="410" <?php selected( '410', $seo_options['status_code'] ); ?>>410 Gone</option>
 								</select>
-								<p class="description"><?php esc_html_e( '410 tells search engines the page is intentionally gone.', 'msc-post-expiry' ); ?></p>
+								<p class="description" id="status_code-description"><?php esc_html_e( '410 tells search engines the page is intentionally gone.', 'msc-post-expiry' ); ?></p>
 							</td>
 						</tr>
 					</tbody>
@@ -891,12 +892,12 @@ class Settings {
 				<table class="widefat" style="margin-bottom:2em;">
 					<thead>
 						<tr>
-							<th><?php esc_html_e( 'Rule', 'msc-post-expiry' ); ?></th>
-							<th><?php esc_html_e( 'Priority', 'msc-post-expiry' ); ?></th>
-							<th><?php esc_html_e( 'Condition', 'msc-post-expiry' ); ?></th>
-							<th><?php esc_html_e( 'Action', 'msc-post-expiry' ); ?></th>
-							<th><?php esc_html_e( 'Status', 'msc-post-expiry' ); ?></th>
-							<th></th>
+							<th scope="col"><?php esc_html_e( 'Rule', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Priority', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Condition', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Action', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Status', 'msc-post-expiry' ); ?></th>
+							<th scope="col"></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -938,8 +939,8 @@ class Settings {
 						<tr>
 							<th scope="row"><label for="rule_name"><?php esc_html_e( 'Rule Name', 'msc-post-expiry' ); ?></label></th>
 							<td>
-								<input type="text" id="rule_name" name="rule_name" class="regular-text" />
-								<p class="description"><?php esc_html_e( 'Optional — a short label so you can recognise the rule later.', 'msc-post-expiry' ); ?></p>
+								<input type="text" id="rule_name" name="rule_name" class="regular-text" aria-describedby="rule_name-description" />
+								<p class="description" id="rule_name-description"><?php esc_html_e( 'Optional — a short label so you can recognise the rule later.', 'msc-post-expiry' ); ?></p>
 							</td>
 						</tr>
 						<tr>
@@ -955,8 +956,8 @@ class Settings {
 						<tr>
 							<th scope="row"><label for="condition_value"><?php esc_html_e( 'Condition Value', 'msc-post-expiry' ); ?></label></th>
 							<td>
-								<input type="text" id="condition_value" name="condition_value" class="regular-text" />
-								<p class="description"><?php esc_html_e( 'Category/tag slug or ID; author login or ID; minimum days for Post Age; a number or "min-max" range for Comment Count and Post Views; "field_name=value" (or just "field_name" for exists) for Custom Field.', 'msc-post-expiry' ); ?></p>
+								<input type="text" id="condition_value" name="condition_value" class="regular-text" aria-describedby="condition_value-description" />
+								<p class="description" id="condition_value-description"><?php esc_html_e( 'Category/tag slug or ID; author login or ID; minimum days for Post Age; a number or "min-max" range for Comment Count and Post Views; "field_name=value" (or just "field_name" for exists) for Custom Field.', 'msc-post-expiry' ); ?></p>
 							</td>
 						</tr>
 						<tr>
@@ -972,15 +973,15 @@ class Settings {
 						<tr>
 							<th scope="row"><label for="action_value"><?php esc_html_e( 'Action Value', 'msc-post-expiry' ); ?></label></th>
 							<td>
-								<input type="text" id="action_value" name="action_value" class="regular-text" />
-								<p class="description"><?php esc_html_e( 'Category ID or slug for "Move to Category", URL for "Set Redirect URL". Not used by other actions.', 'msc-post-expiry' ); ?></p>
+								<input type="text" id="action_value" name="action_value" class="regular-text" aria-describedby="action_value-description" />
+								<p class="description" id="action_value-description"><?php esc_html_e( 'Category ID or slug for "Move to Category", URL for "Set Redirect URL". Not used by other actions.', 'msc-post-expiry' ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<th scope="row"><label for="priority"><?php esc_html_e( 'Priority', 'msc-post-expiry' ); ?></label></th>
 							<td>
-								<input type="number" id="priority" name="priority" value="10" min="1" max="100" style="width:80px;" />
-								<p class="description"><?php esc_html_e( 'Lower number = higher priority. The first matching rule wins.', 'msc-post-expiry' ); ?></p>
+								<input type="number" id="priority" name="priority" value="10" min="1" max="100" style="width:80px;" aria-describedby="priority-description" />
+								<p class="description" id="priority-description"><?php esc_html_e( 'Lower number = higher priority. The first matching rule wins.', 'msc-post-expiry' ); ?></p>
 							</td>
 						</tr>
 						<tr>
@@ -1214,9 +1215,9 @@ class Settings {
 				<table class="widefat">
 					<thead>
 						<tr>
-							<th><?php esc_html_e( 'Post', 'msc-post-expiry' ); ?></th>
-							<th><?php esc_html_e( 'Action', 'msc-post-expiry' ); ?></th>
-							<th><?php esc_html_e( 'Date', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Post', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Action', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Date', 'msc-post-expiry' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>

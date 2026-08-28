@@ -4,7 +4,7 @@ Tags: expire posts, post expiration, unpublish, content expiration, redirect exp
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,6 +137,10 @@ The plugin includes translations for 20 languages: German (Germany and Switzerla
 
 == Changelog ==
 
+= 1.7.3 =
+* Removed: deprecated admin CSS files (`admin-tokens.css`, `admin-components.css`) that were shipping to WordPress.org but never loaded by any PHP code.
+* Improved: accessibility — added `scope="col"` to all admin table headers, `aria-label` on all Chart.js canvas elements, `aria-describedby` wiring on form controls paired with description paragraphs, and a `<legend>` on the Post types fieldset.
+
 = 1.7.2 =
 * Translation maintenance: added 8 new languages (Russian, Simplified Chinese, Turkish, Polish, Indonesian, Swedish, Ukrainian, Arabic) — now 20 locales bundled, all at 100% string coverage. No functional changes.
 
@@ -237,6 +241,9 @@ The plugin includes translations for 20 languages: German (Germany and Switzerla
 * Full internationalization support
 
 == Upgrade Notice ==
+
+= 1.7.3 =
+Maintenance update: removes two deprecated CSS files that were never loaded, and adds accessibility improvements (table scopes, canvas labels, ARIA descriptions, fieldset legend). No functional changes — safe update.
 
 = 1.7.2 =
 Translation maintenance: 8 new languages added (Russian, Simplified Chinese, Turkish, Polish, Indonesian, Swedish, Ukrainian, Arabic) and all 20 bundled locales refreshed to 100% string coverage. No functional changes — safe update.

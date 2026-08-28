@@ -604,22 +604,22 @@ class Analytics {
 			<div class="mscpe-charts-grid">
 				<div class="mscpe-chart-container">
 					<h3><?php esc_html_e( 'Expiry Trends', 'msc-post-expiry' ); ?></h3>
-					<canvas id="mscpe-trends-chart"></canvas>
+					<canvas id="mscpe-trends-chart" aria-label="Expiry Trends chart"></canvas>
 				</div>
 				<div class="mscpe-chart-container">
 					<h3><?php esc_html_e( 'Action Breakdown', 'msc-post-expiry' ); ?></h3>
-					<canvas id="mscpe-actions-chart"></canvas>
+					<canvas id="mscpe-actions-chart" aria-label="Action Breakdown chart"></canvas>
 				</div>
 			</div>
 
 			<div class="mscpe-charts-grid">
 				<div class="mscpe-chart-container">
 					<h3><?php esc_html_e( 'Top Categories', 'msc-post-expiry' ); ?></h3>
-					<canvas id="mscpe-categories-chart"></canvas>
+					<canvas id="mscpe-categories-chart" aria-label="Top Categories chart"></canvas>
 				</div>
 				<div class="mscpe-chart-container">
 					<h3><?php esc_html_e( 'Top Authors', 'msc-post-expiry' ); ?></h3>
-					<canvas id="mscpe-authors-chart"></canvas>
+					<canvas id="mscpe-authors-chart" aria-label="Top Authors chart"></canvas>
 				</div>
 			</div>
 
@@ -628,17 +628,17 @@ class Analytics {
 				<?php if ( empty( $recent_entries ) ) : ?>
 					<p><?php esc_html_e( 'No expiry activity recorded yet.', 'msc-post-expiry' ); ?></p>
 				<?php else : ?>
-					<table class="widefat" style="margin-top:1em;">
-						<thead>
-							<tr>
-								<th><?php esc_html_e( 'Post', 'msc-post-expiry' ); ?></th>
-								<th><?php esc_html_e( 'Action', 'msc-post-expiry' ); ?></th>
-								<th><?php esc_html_e( 'Status', 'msc-post-expiry' ); ?></th>
-								<th><?php esc_html_e( 'Age', 'msc-post-expiry' ); ?></th>
-								<th><?php esc_html_e( 'Views', 'msc-post-expiry' ); ?></th>
-								<th><?php esc_html_e( 'Date', 'msc-post-expiry' ); ?></th>
-							</tr>
-						</thead>
+				<table class="widefat" style="margin-top:1em;">
+					<thead>
+						<tr>
+							<th scope="col"><?php esc_html_e( 'Post', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Action', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Status', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Age', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Views', 'msc-post-expiry' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Date', 'msc-post-expiry' ); ?></th>
+						</tr>
+					</thead>
 						<tbody>
 							<?php foreach ( $recent_entries as $entry ) : ?>
 								<tr>

@@ -2,6 +2,16 @@
 
 All notable changes to MSC Post Expiry are documented in this file.
 
+## [1.7.3] - 2026-08-28
+
+### Removed
+
+- Deprecated admin CSS files (`admin-tokens.css`, `admin-components.css`) that were shipping to WordPress.org but never loaded by any PHP code. Removes a dead teal palette and non-standard class names that collided conceptually with sibling-plugin class names.
+
+### Improved
+
+- Accessibility — added `scope="col"` to all admin table headers (Smart Rules table, Action History table, Analytics recent-activity table), added `aria-label` attributes to all four Chart.js `<canvas>` elements on the Analytics tab, added `aria-describedby` wiring on form controls paired with their description paragraphs, and added a `<legend>` to the Post types fieldset. No new translatable strings introduced.
+
 ## [1.7.2] - 2026-08-27
 
 ### Changed
