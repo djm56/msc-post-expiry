@@ -1,0 +1,145 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Constant MSCPE_PLUGIN_URL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: includes/class-mscpe-analytics.php
+
+		-
+			message: '#^Property MSCPE\\Analytics\:\:\$plugin is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: includes/class-mscpe-analytics.php
+
+		-
+			message: '#^Constant MSCPE_PLUGIN_DIR not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: includes/class-mscpe-cron.php
+
+		-
+			message: '#^Method MSCPE\\Cron\:\:expire_post\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: includes/class-mscpe-cron.php
+
+		-
+			message: '#^Method MSCPE\\Cron\:\:get_expired_posts\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: includes/class-mscpe-cron.php
+
+		-
+			message: '#^Method MSCPE\\Cron\:\:log_event\(\) invoked with 2 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: includes/class-mscpe-cron.php
+
+		-
+			message: '#^Constant MSCPE_PLUGIN_URL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: includes/class-mscpe-module.php
+
+		-
+			message: '#^Method MSCPE\\Module\:\:get_post_type_mode\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: includes/class-mscpe-module.php
+
+		-
+			message: '#^Parameter \#2 \$user_id of function get_the_author_meta expects int\|false, ''''\|numeric\-string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/class-mscpe-module.php
+
+		-
+			message: '#^Property MSCPE\\Plugin\:\:\$cron is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: includes/class-mscpe-plugin.php
+
+		-
+			message: '#^Property MSCPE\\Rules\:\:\$plugin is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: includes/class-mscpe-rules.php
+
+		-
+			message: '#^Property MSCPE\\SEO\:\:\$plugin is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: includes/class-mscpe-seo.php
+
+		-
+			message: '#^Access to property \$ID on an unknown class MSCPE\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 6
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Constant MSCPE_PLUGIN_URL not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Parameter \#1 \$args of function wp_dropdown_categories expects array\{show_option_all\?\: string, show_option_none\?\: string, option_none_value\?\: string, orderby\?\: string, pad_counts\?\: bool, show_count\?\: bool\|int, echo\?\: bool\|int, hierarchical\?\: bool\|int, \.\.\.\}, array\{id\: ''mscpe_expiry…'', name\: ''mscpe_expiry…'', selected\: int, show_option_none\: string, option_none_value\: 0, hide_empty\: 0\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Parameter \#1 \$post of function use_block_editor_for_post expects int\|WP_Post, MSCPE\\WP_Post given\.$#'
+			identifier: argument.type
+			count: 1
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Parameter \#1 \$text of function esc_attr expects string, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Parameter \$post of method MSCPE\\Settings\:\:register_metabox\(\) has invalid type MSCPE\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Parameter \$post of method MSCPE\\Settings\:\:render_metabox\(\) has invalid type MSCPE\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Parameter \$post of method MSCPE\\Settings\:\:save_metabox\(\) has invalid type MSCPE\\WP_Post\.$#'
+			identifier: class.notFound
+			count: 1
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: includes/class-mscpe-settings.php
+
+		-
+			message: '#^Parameter \#3 \$number of function _n expects int, float given\.$#'
+			identifier: argument.type
+			count: 2
+			path: msc-post-expiry.php

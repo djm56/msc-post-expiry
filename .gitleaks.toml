@@ -1,0 +1,11 @@
+title = "MSC plugin gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+paths = [
+  '''(^|/)vendor/''',
+  '''(^|/)node_modules/''',
+  '''(^|/)scan-reports/''',
+]

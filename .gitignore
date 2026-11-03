@@ -9,3 +9,6 @@ vendor
 /progress.md
 /assets/images
 .phpunit.result.cache
+
+# Security scan reports (never committed)
+/scan-reports/

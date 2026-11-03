@@ -6,6 +6,13 @@
     "lint": "composer lint",
     "lint-fix": "composer lint-fix",
     "test": "composer test",
-    "i18n:pot": "composer i18n:pot"
+    "i18n:pot": "composer i18n:pot",
+    "scan:phpcs": "bash scripts/security-scan.sh phpcs",
+    "scan:phpstan": "bash scripts/security-scan.sh phpstan",
+    "scan:semgrep": "bash scripts/security-scan.sh semgrep",
+    "scan:secrets": "bash scripts/security-scan.sh secrets",
+    "scan:deps": "bash scripts/security-scan.sh deps",
+    "scan:wporg": "bash scripts/security-scan.sh wporg",
+    "scan:all": "bash scripts/security-scan.sh all"
   }
 }

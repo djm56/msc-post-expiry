@@ -10,6 +10,7 @@
   <exclude-pattern>*/node_modules/*</exclude-pattern>
   <exclude-pattern>*/dist/*</exclude-pattern>
   <exclude-pattern>*/tests/*</exclude-pattern>
+  <exclude-pattern>*/scan-reports/*</exclude-pattern>
 
   <arg name="extensions" value="php,css"/>
 

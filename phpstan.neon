@@ -1,0 +1,20 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    phpVersion: 70400
+    paths:
+        - .
+    excludePaths:
+        - vendor (?)
+        - node_modules (?)
+        - tests (?)
+        - build (?)
+        - dist (?)
+        - scripts (?)
+        - scan-reports (?)
+        - languages (?)
+    scanFiles:
+        - msc-post-expiry.php
