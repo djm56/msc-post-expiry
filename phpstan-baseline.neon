@@ -31,12 +31,6 @@ parameters:
 			path: includes/class-mscpe-cron.php
 
 		-
-			message: '#^Method MSCPE\\Cron\:\:log_event\(\) invoked with 2 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: includes/class-mscpe-cron.php
-
-		-
 			message: '#^Constant MSCPE_PLUGIN_URL not found\.$#'
 			identifier: constant.notFound
 			count: 1
@@ -73,12 +67,6 @@ parameters:
 			path: includes/class-mscpe-seo.php
 
 		-
-			message: '#^Access to property \$ID on an unknown class MSCPE\\WP_Post\.$#'
-			identifier: class.notFound
-			count: 6
-			path: includes/class-mscpe-settings.php
-
-		-
 			message: '#^Constant MSCPE_PLUGIN_URL not found\.$#'
 			identifier: constant.notFound
 			count: 1
@@ -99,36 +87,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$args of function wp_dropdown_categories expects array\{show_option_all\?\: string, show_option_none\?\: string, option_none_value\?\: string, orderby\?\: string, pad_counts\?\: bool, show_count\?\: bool\|int, echo\?\: bool\|int, hierarchical\?\: bool\|int, \.\.\.\}, array\{id\: ''mscpe_expiry…'', name\: ''mscpe_expiry…'', selected\: int, show_option_none\: string, option_none_value\: 0, hide_empty\: 0\} given\.$#'
 			identifier: argument.type
-			count: 1
-			path: includes/class-mscpe-settings.php
-
-		-
-			message: '#^Parameter \#1 \$post of function use_block_editor_for_post expects int\|WP_Post, MSCPE\\WP_Post given\.$#'
-			identifier: argument.type
-			count: 1
-			path: includes/class-mscpe-settings.php
-
-		-
-			message: '#^Parameter \#1 \$text of function esc_attr expects string, int given\.$#'
-			identifier: argument.type
-			count: 2
-			path: includes/class-mscpe-settings.php
-
-		-
-			message: '#^Parameter \$post of method MSCPE\\Settings\:\:register_metabox\(\) has invalid type MSCPE\\WP_Post\.$#'
-			identifier: class.notFound
-			count: 1
-			path: includes/class-mscpe-settings.php
-
-		-
-			message: '#^Parameter \$post of method MSCPE\\Settings\:\:render_metabox\(\) has invalid type MSCPE\\WP_Post\.$#'
-			identifier: class.notFound
-			count: 1
-			path: includes/class-mscpe-settings.php
-
-		-
-			message: '#^Parameter \$post of method MSCPE\\Settings\:\:save_metabox\(\) has invalid type MSCPE\\WP_Post\.$#'
-			identifier: class.notFound
 			count: 1
 			path: includes/class-mscpe-settings.php
 

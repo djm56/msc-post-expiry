@@ -4,7 +4,7 @@ Tags: expire posts, post expiration, unpublish, content expiration, redirect exp
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.3
+Stable tag: 1.7.4
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,6 +137,13 @@ The plugin includes translations for 20 languages: German (Germany and Switzerla
 
 == Changelog ==
 
+= 1.7.4 =
+* Fixed: Type-safety in settings output (`esc_attr()` on integer values now string-cast).
+* Fixed: Cron `log_event()` now accepts an optional context argument so the expiry timestamp is captured in the log; signature remains backward-compatible.
+* Fixed: Docblock type corrections on metabox callbacks to match the `add_meta_boxes` hook contract.
+* Changed: Dev tooling security patch — composer dev-dependencies updated to clear CVE-2026-65954, CVE-2026-67434, and CVE-2026-45293; `composer audit` is now clean.
+* Note: Targeted `phpcs:ignore` (with rationale) on the dev-only translation script.
+
 = 1.7.3 =
 * Removed: deprecated admin CSS files (`admin-tokens.css`, `admin-components.css`) that were shipping to WordPress.org but never loaded by any PHP code.
 * Improved: accessibility — added `scope="col"` to all admin table headers, `aria-label` on all Chart.js canvas elements, `aria-describedby` wiring on form controls paired with description paragraphs, and a `<legend>` on the Post types fieldset.
@@ -241,6 +248,9 @@ The plugin includes translations for 20 languages: German (Germany and Switzerla
 * Full internationalization support
 
 == Upgrade Notice ==
+
+= 1.7.4 =
+Security scan release: type-safety hardening, cron logging improvement, and dev-dependency CVE cleanup. Recommended update.
 
 = 1.7.3 =
 Maintenance update: removes two deprecated CSS files that were never loaded, and adds accessibility improvements (table scopes, canvas labels, ARIA descriptions, fieldset legend). No functional changes — safe update.

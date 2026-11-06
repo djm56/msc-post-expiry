@@ -372,7 +372,7 @@ class Settings {
 					<tr>
 						<th scope="row"><label for="bulk_default_days"><?php esc_html_e( 'Default expiry window', 'msc-post-expiry' ); ?></label></th>
 						<td>
-							<input id="bulk_default_days" type="number" name="bulk_default_days" min="1" max="3650" value="<?php echo esc_attr( (int) $this->plugin->get_option( 'bulk_default_days', 30 ) ); ?>" style="width:80px;" aria-describedby="bulk_default_days-description" />
+							<input id="bulk_default_days" type="number" name="bulk_default_days" min="1" max="3650" value="<?php echo esc_attr( (string) (int) $this->plugin->get_option( 'bulk_default_days', 30 ) ); ?>" style="width:80px;" aria-describedby="bulk_default_days-description" />
 							<?php esc_html_e( 'days from now', 'msc-post-expiry' ); ?>
 							<p class="description" id="bulk_default_days-description"><?php esc_html_e( 'Used when bulk-scheduling expiry from the Posts list.', 'msc-post-expiry' ); ?></p>
 						</td>
@@ -395,7 +395,7 @@ class Settings {
 					<tr>
 						<th scope="row"><label for="notify_days_before"><?php esc_html_e( 'Days before expiry', 'msc-post-expiry' ); ?></label></th>
 						<td>
-							<input id="notify_days_before" type="number" name="notify_days_before" min="1" max="30" value="<?php echo esc_attr( (int) $this->plugin->get_option( 'notify_days_before', 3 ) ); ?>" style="width:80px;" aria-describedby="notify_days_before-description" />
+							<input id="notify_days_before" type="number" name="notify_days_before" min="1" max="30" value="<?php echo esc_attr( (string) (int) $this->plugin->get_option( 'notify_days_before', 3 ) ); ?>" style="width:80px;" aria-describedby="notify_days_before-description" />
 							<p class="description" id="notify_days_before-description"><?php esc_html_e( 'Send notification this many days before a post expires.', 'msc-post-expiry' ); ?></p>
 						</td>
 					</tr>
@@ -540,8 +540,8 @@ class Settings {
 	/**
 	 * Register metabox for post expiry date.
 	 *
-	 * @param string  $post_type Post type being filtered.
-	 * @param WP_Post $post      Post object being edited.
+	 * @param string                      $post_type Post type being filtered.
+	 * @param \WP_Post|\WP_Comment|object $post      Post, comment, or other object passed by the `add_meta_boxes` hook.
 	 */
 	public function register_metabox( $post_type, $post ) {
 		if ( ! $this->plugin->get_option( 'module_enabled', 1 ) ) {
@@ -584,7 +584,7 @@ class Settings {
 	/**
 	 * Render metabox for post expiry date.
 	 *
-	 * @param WP_Post $post Post object.
+	 * @param \WP_Post $post Post object.
 	 */
 	public function render_metabox( $post ) {
 		wp_nonce_field( 'mscpe_expiry_nonce', 'mscpe_expiry_nonce' );
@@ -664,8 +664,8 @@ class Settings {
 	/**
 	 * Save metabox data.
 	 *
-	 * @param int     $post_id Post ID.
-	 * @param WP_Post $post    Post object.
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    Post object.
 	 */
 	public function save_metabox( $post_id, $post ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce check below.

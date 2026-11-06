@@ -2,6 +2,22 @@
 
 All notable changes to MSC Post Expiry are documented in this file.
 
+## [1.7.4] - 2026-11-05
+
+### Fixed
+
+- Type-safety in settings output (`esc_attr()` on integer values now string-cast).
+- Cron `log_event()` now accepts an optional context argument — the expiry timestamp is captured in the log while keeping the signature backward-compatible.
+- Docblock type corrections on metabox callbacks to match the `add_meta_boxes` hook contract.
+
+### Changed
+
+- Dev tooling security patch — composer dev-dependencies updated to clear CVE-2026-65954 / CVE-2026-67434 / CVE-2026-45293; `composer audit` now clean.
+
+### Notes
+
+- Targeted `phpcs:ignore` comment (with rationale) added on the dev-only translation script.
+
 ## [1.7.3] - 2026-08-28
 
 ### Removed

@@ -1843,6 +1843,7 @@ foreach ( $locales as $locale_code => $locale_data ) {
 	$cmd     = 'msgfmt -o ' . escapeshellarg( $mo_file ) . ' ' . escapeshellarg( $po_file ) . ' 2>&1';
 	$output  = array();
 	$ret     = 0;
+	// phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative -- Intentional dev-tool call in dist-excluded translation generator; hard-coded msgfmt command with shell-escaped arguments.
 	exec( $cmd, $output, $ret );
 
 	if ( 0 === $ret ) {

@@ -362,8 +362,9 @@ class Cron {
 	 * Uses WP_Filesystem for reliable file operations.
 	 *
 	 * @param string $message Log message.
+	 * @param mixed  $context Optional additional context to append to the message.
 	 */
-	private function log_event( $message ) {
+	private function log_event( $message, $context = '' ) {
 		if ( ! (bool) apply_filters( 'mscpe_enable_logging', true ) ) {
 			return;
 		}
@@ -396,6 +397,12 @@ class Cron {
 
 		$log_file  = $log_path . '/msc-post-expiry.log';
 		$timestamp = current_time( 'Y-m-d H:i:s' );
+
+		// Append optional context to the message for richer debugging output.
+		if ( '' !== $context ) {
+			$message .= ' | Context: ' . $context;
+		}
+
 		$log_entry = sprintf( "[%s] %s\n", $timestamp, $message );
 
 		// Read existing content.
