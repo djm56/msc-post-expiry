@@ -2,21 +2,29 @@
 
 All notable changes to MSC Post Expiry are documented in this file.
 
-## [1.7.4] - 2026-11-05
+## [1.7.4] - 2026-11-06
 
 ### Fixed
 
 - Type-safety in settings output (`esc_attr()` on integer values now string-cast).
 - Cron `log_event()` now accepts an optional context argument — the expiry timestamp is captured in the log while keeping the signature backward-compatible.
 - Docblock type corrections on metabox callbacks to match the `add_meta_boxes` hook contract.
+- **Timezone drift**: expiry dates entered in the classic metabox or the block-editor sidebar no longer drift by the site's UTC offset on every save — dates are parsed in the site's timezone (metabox save, legacy meta migration, and expiry helper functions), and the sidebar now uses core's DateTimePicker with site-timezone conversion.
+- **Processing stall**: expiry processing no longer stalls when many already-processed expired posts pile up; the cron query now excludes already-processed posts. Any backlog of stuck posts will be processed on the first cron run after updating.
+- **Republished posts**: no longer keep expired-state side effects (410/noindex/redirect) — the processed flag is cleared on republish and on expiry removal.
+- **External redirects**: editor-set external redirect URLs are now honored for visitors (previously fell back to the admin login); empty/invalid URLs fall back to the site home page.
+- **Reminder emails**: now reach bulk-scheduled and rescheduled posts; the reminder flag resets when an expiry is moved to a new time (identical re-saves do nothing).
+- **Debug log privacy**: logging now defaults to OFF for new installations (existing installations keep their current setting); the log directory is protected against direct access on Apache servers (`.htaccess` + `index.php`); log writes are append-only with size-based rotation and retention cleanup.
 
 ### Changed
 
 - Dev tooling security patch — composer dev-dependencies updated to clear CVE-2026-65954 / CVE-2026-67434 / CVE-2026-45293; `composer audit` now clean.
+- Removed the unreachable legacy cron pipeline; post-meta authorization now checks per-post edit capability; the expiry action value is validated when written via REST; uninstall is now multisite-aware (cleans all sites); the custom cron schedule labels are now translatable (2 new strings).
 
 ### Notes
 
 - Targeted `phpcs:ignore` comment (with rationale) added on the dev-only translation script.
+- Added regression tests for the timezone and processing-stall fixes (mock-based suite now 101 tests).
 
 ## [1.7.3] - 2026-08-28
 

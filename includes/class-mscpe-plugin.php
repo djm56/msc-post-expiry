@@ -217,7 +217,7 @@ class Plugin {
 			'notify_enabled'     => 0,
 			'notify_days_before' => 3,
 			'notify_recipients'  => 'author',
-			'log_enabled'        => 1,
+			'log_enabled'        => 0,
 		);
 	}
 

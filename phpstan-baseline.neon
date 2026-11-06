@@ -19,18 +19,6 @@ parameters:
 			path: includes/class-mscpe-cron.php
 
 		-
-			message: '#^Method MSCPE\\Cron\:\:expire_post\(\) is unused\.$#'
-			identifier: method.unused
-			count: 1
-			path: includes/class-mscpe-cron.php
-
-		-
-			message: '#^Method MSCPE\\Cron\:\:get_expired_posts\(\) is unused\.$#'
-			identifier: method.unused
-			count: 1
-			path: includes/class-mscpe-cron.php
-
-		-
 			message: '#^Constant MSCPE_PLUGIN_URL not found\.$#'
 			identifier: constant.notFound
 			count: 1

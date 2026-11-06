@@ -22,12 +22,15 @@ class MSCPE_Test_Case extends TestCase {
 	protected function set_up() {
 		parent::set_up();
 
-		$GLOBALS['mscpe_test_calls']    = array();
-		$GLOBALS['mscpe_test_options']  = array();
-		$GLOBALS['mscpe_test_postmeta'] = array();
-		$GLOBALS['mscpe_test_cron']     = array();
-		$GLOBALS['mscpe_test_filters']  = array();
-		$GLOBALS['mscpe_test_actions']  = array();
+		$GLOBALS['mscpe_test_calls']           = array();
+		$GLOBALS['mscpe_test_options']         = array();
+		$GLOBALS['mscpe_test_postmeta']        = array();
+		$GLOBALS['mscpe_test_cron']            = array();
+		$GLOBALS['mscpe_test_filters']         = array();
+		$GLOBALS['mscpe_test_actions']         = array();
+		$GLOBALS['mscpe_test_query_posts']     = array();
+		$GLOBALS['mscpe_test_last_query_args'] = array();
+		$GLOBALS['mscpe_test_timezone']        = 'UTC';
 	}
 
 	/**

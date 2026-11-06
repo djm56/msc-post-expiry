@@ -35,6 +35,18 @@ class Module {
 	private $plugin;
 
 	/**
+	 * Stashed old expiry timestamp while an update is in flight.
+	 *
+	 * Associative array mapping post_id to pre-update expiry timestamp.
+	 * Used by {@see self::capture_expiry_meta_old_value()} and
+	 * {@see self::maybe_reset_processed_flag()} to detect whether the timestamp
+	 * actually changed, so identical re-saves do not reset notifications.
+	 *
+	 * @var array<int,int>
+	 */
+	private $expiry_meta_old_values = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Plugin $plugin Plugin instance.
@@ -46,8 +58,11 @@ class Module {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
 		add_action( self::CRON_HOOK, array( $this, 'process_expired_posts' ) );
 		add_action( 'template_redirect', array( $this, 'handle_redirect' ) );
+		add_action( 'transition_post_status', array( $this, 'clear_processed_on_republish' ), 10, 3 );
 		add_action( 'added_post_meta', array( $this, 'maybe_reset_processed_flag' ), 10, 4 );
 		add_action( 'updated_post_meta', array( $this, 'maybe_reset_processed_flag' ), 10, 4 );
+		add_action( 'deleted_post_meta', array( $this, 'clear_processed_on_expiry_removed' ), 10, 3 );
+		add_filter( 'update_post_metadata', array( $this, 'capture_expiry_meta_old_value' ), 10, 5 );
 
 		$post_types = $this->get_post_types();
 		foreach ( $post_types as $post_type ) {
@@ -101,8 +116,8 @@ class Module {
 					'single'        => true,
 					'show_in_rest'  => true,
 					'default'       => 0,
-					'auth_callback' => static function () {
-						return current_user_can( 'edit_posts' );
+					'auth_callback' => static function ( $allowed, $meta_key, $object_id ) {
+						return current_user_can( 'edit_post', $object_id );
 					},
 				)
 			);
@@ -115,8 +130,8 @@ class Module {
 					'single'        => true,
 					'show_in_rest'  => false,
 					'default'       => false,
-					'auth_callback' => static function () {
-						return current_user_can( 'edit_posts' );
+					'auth_callback' => static function ( $allowed, $meta_key, $object_id ) {
+						return current_user_can( 'edit_post', $object_id );
 					},
 				)
 			);
@@ -129,8 +144,8 @@ class Module {
 					'single'        => true,
 					'show_in_rest'  => false,
 					'default'       => 0,
-					'auth_callback' => static function () {
-						return current_user_can( 'edit_posts' );
+					'auth_callback' => static function ( $allowed, $meta_key, $object_id ) {
+						return current_user_can( 'edit_post', $object_id );
 					},
 				)
 			);
@@ -140,12 +155,13 @@ class Module {
 				$post_type,
 				self::META_KEY_ACTION,
 				array(
-					'type'          => 'string',
-					'single'        => true,
-					'show_in_rest'  => true,
-					'default'       => '',
-					'auth_callback' => static function () {
-						return current_user_can( 'edit_posts' );
+					'type'              => 'string',
+					'single'            => true,
+					'show_in_rest'      => true,
+					'default'           => '',
+					'sanitize_callback' => array( __CLASS__, 'sanitize_expiry_action' ),
+					'auth_callback'     => static function ( $allowed, $meta_key, $object_id ) {
+						return current_user_can( 'edit_post', $object_id );
 					},
 				)
 			);
@@ -159,8 +175,8 @@ class Module {
 					'show_in_rest'      => true,
 					'default'           => '',
 					'sanitize_callback' => 'esc_url_raw',
-					'auth_callback'     => static function () {
-						return current_user_can( 'edit_posts' );
+					'auth_callback'     => static function ( $allowed, $meta_key, $object_id ) {
+						return current_user_can( 'edit_post', $object_id );
 					},
 				)
 			);
@@ -173,8 +189,8 @@ class Module {
 					'single'        => true,
 					'show_in_rest'  => true,
 					'default'       => 0,
-					'auth_callback' => static function () {
-						return current_user_can( 'edit_posts' );
+					'auth_callback' => static function ( $allowed, $meta_key, $object_id ) {
+						return current_user_can( 'edit_post', $object_id );
 					},
 				)
 			);
@@ -199,7 +215,7 @@ class Module {
 		wp_enqueue_script(
 			'mscpe-expiry-sidebar',
 			MSCPE_PLUGIN_URL . 'assets/js/expiry-sidebar.js',
-			array( 'wp-components', 'wp-compose', 'wp-data', 'wp-edit-post', 'wp-element', 'wp-plugins' ),
+			array( 'wp-components', 'wp-compose', 'wp-data', 'wp-date', 'wp-edit-post', 'wp-element', 'wp-plugins' ),
 			MSCPE_PLUGIN_VERSION,
 			true
 		);
@@ -244,6 +260,21 @@ class Module {
 	}
 
 	/**
+	 * Sanitizes the per-post expiry action meta value.
+	 *
+	 * Falls back to the default "draft" action when the submitted value is not
+	 * one of the choices exposed in the settings UI.
+	 *
+	 * @param mixed $value Submitted meta value.
+	 * @return string Valid action slug.
+	 */
+	public static function sanitize_expiry_action( $value ) {
+		$choices = array_keys( self::get_action_choices() );
+
+		return in_array( (string) $value, $choices, true ) ? (string) $value : 'draft';
+	}
+
+	/**
 	 * Adds the bulk expiry action to the post list bulk-actions dropdown.
 	 *
 	 * @param array $actions Existing bulk actions.
@@ -271,18 +302,48 @@ class Module {
 		$ts   = time() + ( $days * DAY_IN_SECONDS );
 
 		foreach ( $post_ids as $post_id ) {
+			// update_post_meta() -> update_post_metadata filter (captures old
+			// timestamp via capture_expiry_meta_old_value()) -> updated_post_meta
+			// action (where maybe_reset_processed_flag() re-arms processing and
+			// clears the reminder flag, only when the timestamp actually changes).
 			update_post_meta( $post_id, self::META_KEY_EXPIRY, $ts );
-			update_post_meta( $post_id, self::META_KEY_PROCESSED, 0 );
 		}
 
 		return add_query_arg( 'mscpe_bulk_expiry', count( $post_ids ), $redirect_url );
 	}
 
 	/**
-	 * Resets the processed flag when a post is given a new future expiry date.
+	 * Captures the old expiry timestamp before an update runs.
+	 *
+	 * The {@see 'updated_post_meta'} action does not provide the previous value,
+	 * so we stash it here on the way in. This lets
+	 * {@see self::maybe_reset_processed_flag()} distinguish a real reschedule
+	 * from a save that simply re-writes the same timestamp.
+	 *
+	 * @param mixed  $check      Short-circuit value (null means proceed).
+	 * @param int    $object_id  Post ID.
+	 * @param string $meta_key   Meta key being updated.
+	 * @param mixed  $meta_value New meta value.
+	 * @param int    $meta_id    Existing meta row ID.
+	 * @return mixed
+	 */
+	public function capture_expiry_meta_old_value( $check, $object_id, $meta_key, $meta_value, $meta_id ) {
+		if ( self::META_KEY_EXPIRY === $meta_key ) {
+			// get_post_meta() still returns the pre-update value because the
+			// database write has not happened yet.
+			$this->expiry_meta_old_values[ (int) $object_id ] = (int) get_post_meta( (int) $object_id, self::META_KEY_EXPIRY, true );
+		}
+
+		return $check;
+	}
+
+	/**
+	 * Resets expiry flags when a post is given a new future expiry date.
 	 *
 	 * Runs on added_post_meta/updated_post_meta so rescheduling via the block
 	 * editor sidebar (which only writes the timestamp meta) re-arms processing.
+	 * The reminder flag is also cleared, but only when the timestamp actually
+	 * changes, so re-saving the same date does not trigger duplicate reminders.
 	 *
 	 * @param int    $meta_id    Meta row ID.
 	 * @param int    $post_id    Post ID.
@@ -295,9 +356,72 @@ class Module {
 			return;
 		}
 
-		if ( (int) $meta_value > time() && (bool) get_post_meta( $post_id, self::META_KEY_PROCESSED, true ) ) {
+		$new_timestamp = (int) $meta_value;
+		if ( $new_timestamp <= 0 ) {
+			return;
+		}
+
+		$old_timestamp = 0;
+		if ( isset( $this->expiry_meta_old_values[ $post_id ] ) ) {
+			$old_timestamp = $this->expiry_meta_old_values[ $post_id ];
+			unset( $this->expiry_meta_old_values[ $post_id ] );
+		}
+
+		// Do nothing if the timestamp is unchanged; identical re-saves must not
+		// reset notifications (BUG 6).
+		if ( $old_timestamp === $new_timestamp ) {
+			return;
+		}
+
+		// Re-arm expiry processing for future timestamps.
+		if ( $new_timestamp > time() && (bool) get_post_meta( $post_id, self::META_KEY_PROCESSED, true ) ) {
 			update_post_meta( $post_id, self::META_KEY_PROCESSED, 0 );
 		}
+
+		// Clear the reminder flag so the new expiry gets a fresh reminder.
+		if ( (int) get_post_meta( $post_id, self::META_KEY_NOTIFY_SENT, true ) > 0 ) {
+			delete_post_meta( $post_id, self::META_KEY_NOTIFY_SENT );
+		}
+	}
+
+	/**
+	 * Clears the expiry-processed flag when a post is republished.
+	 *
+	 * Without this, a previously expired post keeps serving 410/noindex/redirect
+	 * even after an editor transitions it back to publish (BUG 4).
+	 *
+	 * @param string  $new_status New post status.
+	 * @param string  $old_status Old post status.
+	 * @param \WP_Post $post      Post object.
+	 * @return void
+	 */
+	public function clear_processed_on_republish( $new_status, $old_status, $post ) {
+		if ( 'publish' !== $new_status ) {
+			return;
+		}
+
+		delete_post_meta( $post->ID, self::META_KEY_PROCESSED );
+	}
+
+	/**
+	 * Clears expiry flags when the expiry timestamp meta is deleted.
+	 *
+	 * Covers expiry removal paths such as the metabox "empty date" save and
+	 * any REST/meta deletion path, so stale processed/notify flags do not linger
+	 * after the expiry has been removed (BUG 4).
+	 *
+	 * @param int    $meta_ids   Deleted meta row IDs.
+	 * @param int    $object_id  Post ID.
+	 * @param string $meta_key   Meta key.
+	 * @return void
+	 */
+	public function clear_processed_on_expiry_removed( $meta_ids, $object_id, $meta_key ) {
+		if ( self::META_KEY_EXPIRY !== $meta_key ) {
+			return;
+		}
+
+		delete_post_meta( (int) $object_id, self::META_KEY_PROCESSED );
+		delete_post_meta( (int) $object_id, self::META_KEY_NOTIFY_SENT );
 	}
 
 	/**
@@ -331,6 +455,7 @@ class Module {
 				'posts_per_page' => 50,
 				'fields'         => 'ids',
 				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					'relation' => 'AND',
 					array(
 						'key'     => self::META_KEY_EXPIRY,
 						'value'   => time(),
@@ -342,6 +467,18 @@ class Module {
 						'value'   => 0,
 						'compare' => '>',
 						'type'    => 'NUMERIC',
+					),
+					array(
+						'relation' => 'OR',
+						array(
+							'key'     => self::META_KEY_PROCESSED,
+							'compare' => 'NOT EXISTS',
+						),
+						array(
+							'key'     => self::META_KEY_PROCESSED,
+							'value'   => '0',
+							'compare' => '=',
+						),
 					),
 				),
 			)
@@ -358,10 +495,7 @@ class Module {
 		$processed_count = 0;
 
 		foreach ( $query->posts as $post_id ) {
-			if ( (bool) get_post_meta( $post_id, self::META_KEY_PROCESSED, true ) ) {
-				continue;
-			}
-
+			// The NOT EXISTS / = '0' clause above already excludes processed posts.
 			// Check for conditional rules.
 			if ( $rules ) {
 				$rule_result = $rules->evaluate_rules( $post_id );
@@ -456,6 +590,7 @@ class Module {
 				'posts_per_page' => 50,
 				'fields'         => 'ids',
 				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					'relation' => 'AND',
 					array(
 						'key'     => self::META_KEY_EXPIRY,
 						'value'   => array( time(), $cutoff_time ),
@@ -463,8 +598,16 @@ class Module {
 						'type'    => 'NUMERIC',
 					),
 					array(
-						'key'     => self::META_KEY_PROCESSED,
-						'compare' => 'NOT EXISTS',
+						'relation' => 'OR',
+						array(
+							'key'     => self::META_KEY_PROCESSED,
+							'compare' => 'NOT EXISTS',
+						),
+						array(
+							'key'     => self::META_KEY_PROCESSED,
+							'value'   => '0',
+							'compare' => '=',
+						),
 					),
 				),
 			)
@@ -594,11 +737,15 @@ class Module {
 		}
 
 		$redirect = (string) get_post_meta( $post->ID, self::META_KEY_REDIRECT_URL, true );
+		$redirect = esc_url_raw( $redirect );
 		if ( '' === $redirect ) {
-			return;
+			// Public visitors should land on the site, not wp-admin (BUG 5).
+			$redirect = home_url();
 		}
 
-		wp_safe_redirect( $redirect, 302 );
+		// wp_redirect() allows external URLs set by editors; wp_safe_redirect()
+		// would silently drop them and send visitors to wp-admin (BUG 5).
+		wp_redirect( $redirect, 302 ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 		exit;
 	}
 

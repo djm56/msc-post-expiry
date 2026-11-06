@@ -37,6 +37,7 @@ $GLOBALS['mscpe_test_actions'] = array();
 $GLOBALS['wpdb'] = new class {
 	public $prefix = 'wp_';
 	public $postmeta = 'wp_postmeta';
+	public $insert_id = 0;
 	public function get_charset_collate() {
 		return 'DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
 	}
@@ -46,6 +47,11 @@ $GLOBALS['wpdb'] = new class {
 	}
 	public function prepare( $query, ...$args ) {
 		return vsprintf( str_replace( '%s', "'%s'", $query ), $args );
+	}
+	public function insert( $table, $data, $format = array() ) {
+		$GLOBALS['mscpe_test_calls'][] = array( 'wpdb_insert', $table, $data, $format );
+		++$this->insert_id;
+		return true;
 	}
 };
 
@@ -632,6 +638,47 @@ if ( ! function_exists( 'wp_json_encode' ) ) {
 if ( ! function_exists( 'wp_date' ) ) {
 	function wp_date( $format, $timestamp = null ) {
 		return date( $format, $timestamp ?? time() );
+	}
+}
+
+if ( ! function_exists( 'wp_timezone' ) ) {
+	function wp_timezone() {
+		return new DateTimeZone( $GLOBALS['mscpe_test_timezone'] ?? 'UTC' );
+	}
+}
+
+if ( ! function_exists( 'wp_is_post_revision' ) ) {
+	function wp_is_post_revision( $post_id ) {
+		return false;
+	}
+}
+
+if ( ! class_exists( 'WP_Query' ) ) {
+	class WP_Query {
+		/**
+		 * Query arguments passed to the constructor.
+		 *
+		 * @var array
+		 */
+		public $query_vars = array();
+
+		/**
+		 * Resulting post IDs.
+		 *
+		 * @var int[]
+		 */
+		public $posts = array();
+
+		/**
+		 * Captures the query arguments and uses a test-defined result set.
+		 *
+		 * @param array $query_vars Query arguments.
+		 */
+		public function __construct( $query_vars = array() ) {
+			$this->query_vars                      = $query_vars;
+			$this->posts                           = $GLOBALS['mscpe_test_query_posts'] ?? array();
+			$GLOBALS['mscpe_test_last_query_args'] = $query_vars;
+		}
 	}
 }
 

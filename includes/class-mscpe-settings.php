@@ -420,7 +420,7 @@ class Settings {
 						<th scope="row"><?php esc_html_e( 'Action log', 'msc-post-expiry' ); ?></th>
 						<td>
 							<label for="log_enabled">
-								<input id="log_enabled" type="checkbox" name="log_enabled" value="1" <?php checked( 1, (int) $this->plugin->get_option( 'log_enabled', 1 ) ); ?> />
+								<input id="log_enabled" type="checkbox" name="log_enabled" value="1" <?php checked( 1, (int) $this->plugin->get_option( 'log_enabled', 0 ) ); ?> />
 								<?php esc_html_e( 'Log expiry actions in the History tab.', 'msc-post-expiry' ); ?>
 							</label>
 						</td>
@@ -706,14 +706,23 @@ class Settings {
 		if ( $expiry_date ) {
 			// Store the unified timestamp — the single source of truth since 1.6.0.
 			// Default time to '00:00' so posts without a time still expire at midnight.
+			// Parse the entered value in the site's timezone so the stored epoch matches
+			// the wall-clock time the user sees (WordPress forces PHP default to UTC).
 			$effective_time = $expiry_time ?: '00:00';
-			$timestamp      = strtotime( $expiry_date . ' ' . $effective_time );
+			$dt             = date_create_immutable( "$expiry_date $effective_time", wp_timezone() );
+			$timestamp      = $dt ? $dt->getTimestamp() : false;
 			if ( false !== $timestamp ) {
+				// The Module::maybe_reset_processed_flag() hook handles re-arming
+				// processing and clearing notifications, but only when the timestamp
+				// actually changes, so identical re-saves do not re-notify (BUG 6).
 				update_post_meta( $post_id, '_mscpe_expiry_timestamp', $timestamp );
-				update_post_meta( $post_id, '_mscpe_expiry_processed', 0 );
 			}
 		} else {
+			// Expiry fully removed: clear all derived flags so stale noindex/410/
+			// redirect state does not linger (BUG 4).
 			delete_post_meta( $post_id, '_mscpe_expiry_timestamp' );
+			delete_post_meta( $post_id, '_mscpe_expiry_processed' );
+			delete_post_meta( $post_id, '_mscpe_notify_sent' );
 		}
 
 		// Clear any legacy date/time meta (migrated to the timestamp).

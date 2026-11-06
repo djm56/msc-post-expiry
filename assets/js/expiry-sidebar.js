@@ -1,15 +1,62 @@
 ( function ( wp, config ) {
-	if ( ! wp || ! config || ! wp.plugins || ! wp.editPost ) {
+	if ( ! wp || ! config || ! wp.plugins || ! wp.editPost || ! wp.date ) {
 		return;
 	}
 
 	var registerPlugin             = wp.plugins.registerPlugin;
 	var PluginDocumentSettingPanel = wp.editPost.PluginDocumentSettingPanel;
-	var TextControl                = wp.components.TextControl;
+	var DateTimePicker             = wp.components.DateTimePicker;
 	var SelectControl              = wp.components.SelectControl;
+	var TextControl                = wp.components.TextControl;
 	var el                         = wp.element.createElement;
 	var useSelect                  = wp.data.useSelect;
 	var useDispatch                = wp.data.useDispatch;
+	var dateI18n                   = wp.date.dateI18n;
+	var getDate                    = wp.date.getDate;
+
+	/**
+	 * Convert a UTC epoch timestamp to a site-local string for DateTimePicker.
+	 *
+	 * DateTimePicker's currentDate/onChange contract is a timezone-less wall-clock
+	 * string (YYYY-MM-DDTHH:mm:ss). The only timezone interpretation we perform
+	 * is inside wp.date, which uses the site's configured timezone.
+	 *
+	 * @param {number} timestamp UTC epoch in seconds.
+	 * @return {string|null} Wall-clock string in site-local time, or null if no timestamp.
+	 */
+	function timestampToSiteDate( timestamp ) {
+		if ( ! timestamp ) {
+			return null;
+		}
+
+		return dateI18n( 'Y-m-d\\TH:i:s', timestamp * 1000 );
+	}
+
+	/**
+	 * Convert a DateTimePicker value back to a UTC epoch timestamp.
+	 *
+	 * The picker supplies a timezone-less wall-clock string (YYYY-MM-DDTHH:mm:ss).
+	 * We parse that value through wp.date's getDate() so it is interpreted in the
+	 * site's configured timezone, not the browser's timezone.
+	 *
+	 * @param {string|number} value Value from the picker.
+	 * @return {number} UTC epoch in seconds.
+	 */
+	function siteDateToTimestamp( value ) {
+		if ( ! value ) {
+			return 0;
+		}
+
+		if ( 'string' === typeof value ) {
+			return Math.floor( getDate( value.replace( 'T', ' ' ) ).getTime() / 1000 );
+		}
+
+		if ( 'number' === typeof value ) {
+			return Math.floor( value / 1000 );
+		}
+
+		return 0;
+	}
 
 	function actionOptions() {
 		var actions = config.actions || {};
@@ -41,21 +88,27 @@
 			editPost( { meta: newMeta } );
 		}
 
-		var current    = meta[ config.metaKey ] ? new Date( meta[ config.metaKey ] * 1000 ) : null;
-		var fieldValue = current ? current.toISOString().slice( 0, 16 ) : '';
+		var timestamp  = meta[ config.metaKey ] ? parseInt( meta[ config.metaKey ], 10 ) : 0;
+		var currentDate = timestamp > 0 ? timestampToSiteDate( timestamp ) : null;
 		var action     = meta[ config.actionMetaKey ] || '';
 
 		var children = [
 			el( 'p', { key: 'help' }, config.help ),
 			el(
-				TextControl,
+				'label',
+				{
+					key: 'datetime-label',
+					style: { display: 'block', fontWeight: 'bold', marginBottom: '8px' },
+				},
+				config.label
+			),
+			el(
+				DateTimePicker,
 				{
 					key: 'datetime',
-					label: config.label,
-					type: 'datetime-local',
-					value: fieldValue,
-					onChange: function ( nextValue ) {
-						setMeta( config.metaKey, nextValue ? Math.floor( new Date( nextValue ).getTime() / 1000 ) : 0 );
+					currentDate: currentDate,
+					onChange: function ( nextDate ) {
+						setMeta( config.metaKey, nextDate ? siteDateToTimestamp( nextDate ) : 0 );
 					},
 				}
 			),

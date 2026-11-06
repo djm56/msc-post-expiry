@@ -168,4 +168,29 @@ class Test_Settings extends MSCPE_Test_Case {
 
 		$this->assertStringContainsString( 'https://wordpress.org/support/plugin/msc-post-expiry/', $output );
 	}
+
+	/**
+	 * Regression test: re-saving the same expiry in a non-UTC timezone must not
+	 * drift the stored timestamp (BUG 1).
+	 */
+	public function test_saving_same_expiry_twice_does_not_drift_in_non_utc_timezone() {
+		$GLOBALS['mscpe_test_timezone'] = 'Africa/Johannesburg';
+
+		$post_id = 123;
+		$post    = new \stdClass();
+		$post->ID = $post_id;
+
+		$_POST['mscpe_expiry_nonce'] = 'nonce_value';
+		$_POST['mscpe_expiry_date']  = '2026-12-25';
+		$_POST['mscpe_expiry_time']  = '14:30';
+
+		$this->settings->save_metabox( $post_id, $post );
+		$first = (int) get_post_meta( $post_id, '_mscpe_expiry_timestamp', true );
+
+		$this->settings->save_metabox( $post_id, $post );
+		$second = (int) get_post_meta( $post_id, '_mscpe_expiry_timestamp', true );
+
+		$this->assertGreaterThan( 0, $first, 'A timestamp should have been stored.' );
+		$this->assertSame( $first, $second, 'Re-saving the same expiry should produce the same timestamp.' );
+	}
 }

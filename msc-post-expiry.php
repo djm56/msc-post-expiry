@@ -76,16 +76,18 @@ add_action(
 add_filter(
 	'cron_schedules',
 	static function ( $schedules ) {
+		// WordPress auto-loads plugin translations since 4.6 (Requires at least
+		// is 5.9), so __() is sufficient for cron schedule labels shown later.
 		if ( ! isset( $schedules['mscpe_5min'] ) ) {
 			$schedules['mscpe_5min'] = array(
 				'interval' => 300,
-				'display'  => 'Every 5 minutes',
+				'display'  => __( 'Every 5 minutes', 'msc-post-expiry' ),
 			);
 		}
 		if ( ! isset( $schedules['mscpe_15min'] ) ) {
 			$schedules['mscpe_15min'] = array(
 				'interval' => 900,
-				'display'  => 'Every 15 minutes',
+				'display'  => __( 'Every 15 minutes', 'msc-post-expiry' ),
 			);
 		}
 		return $schedules;
@@ -141,17 +143,25 @@ if ( ! function_exists( 'mscpe_is_post_expired' ) ) {
 			$post_id = get_the_ID();
 		}
 
+		// Compare the stored UTC epoch directly; formatting → parsing round-trips
+		// drift by the site offset when WordPress forces PHP's timezone to UTC.
+		$timestamp = get_post_meta( $post_id, '_mscpe_expiry_timestamp', true );
+		if ( is_numeric( $timestamp ) && (int) $timestamp > 0 ) {
+			return time() >= (int) $timestamp;
+		}
+
+		// Fallback for legacy date/time meta (pre-1.6.0).
 		$expiry = mscpe_get_expiry_datetime( $post_id );
 		if ( ! $expiry ) {
 			return false;
 		}
 
-		$expiry_datetime = strtotime( $expiry['date'] . ' ' . $expiry['time'] );
-		if ( false === $expiry_datetime ) {
+		$dt = date_create_immutable( $expiry['date'] . ' ' . $expiry['time'], wp_timezone() );
+		if ( false === $dt ) {
 			return false;
 		}
 
-		return time() >= $expiry_datetime;
+		return time() >= $dt->getTimestamp();
 	}
 }
 
@@ -167,15 +177,24 @@ if ( ! function_exists( 'mscpe_get_expiry_status' ) ) {
 			$post_id = get_the_ID();
 		}
 
-		$expiry = mscpe_get_expiry_datetime( $post_id );
-		if ( ! $expiry ) {
-			return __( 'No expiry set', 'msc-post-expiry' );
+		// Use the stored UTC epoch directly to avoid timezone round-trip drift.
+		$timestamp = get_post_meta( $post_id, '_mscpe_expiry_timestamp', true );
+		if ( is_numeric( $timestamp ) && (int) $timestamp > 0 ) {
+			$expiry_datetime = (int) $timestamp;
+		} else {
+			// Fallback for legacy date/time meta (pre-1.6.0).
+			$expiry = mscpe_get_expiry_datetime( $post_id );
+			if ( ! $expiry ) {
+				return __( 'No expiry set', 'msc-post-expiry' );
+			}
+
+			$dt = date_create_immutable( $expiry['date'] . ' ' . $expiry['time'], wp_timezone() );
+			if ( false === $dt ) {
+				return __( 'No expiry set', 'msc-post-expiry' );
+			}
+			$expiry_datetime = $dt->getTimestamp();
 		}
 
-		$expiry_datetime = strtotime( $expiry['date'] . ' ' . $expiry['time'] );
-		if ( false === $expiry_datetime ) {
-			return __( 'No expiry set', 'msc-post-expiry' );
-		}
 		$current_datetime = time();
 
 		if ( $current_datetime >= $expiry_datetime ) {
@@ -219,11 +238,13 @@ if ( ! function_exists( 'mscpe_format_expiry_datetime' ) ) {
 			return '';
 		}
 
-		$datetime = strtotime( $date . ' ' . $time );
-		if ( ! $datetime ) {
+		// Expiry date/time inputs are site-local wall-clock values; parse them in
+		// the site's timezone so the displayed instant matches what the user sees.
+		$dt = date_create_immutable( $date . ' ' . $time, wp_timezone() );
+		if ( false === $dt ) {
 			return '';
 		}
 
-		return wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $datetime );
+		return wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $dt->getTimestamp() );
 	}
 }

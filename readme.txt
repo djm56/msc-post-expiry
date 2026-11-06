@@ -141,8 +141,16 @@ The plugin includes translations for 20 languages: German (Germany and Switzerla
 * Fixed: Type-safety in settings output (`esc_attr()` on integer values now string-cast).
 * Fixed: Cron `log_event()` now accepts an optional context argument so the expiry timestamp is captured in the log; signature remains backward-compatible.
 * Fixed: Docblock type corrections on metabox callbacks to match the `add_meta_boxes` hook contract.
+* Fixed: Timezone drift — expiry dates entered in the classic metabox or block-editor sidebar no longer drift by the site's UTC offset on every save; dates are parsed in the site's timezone and the sidebar uses core's DateTimePicker with site-timezone conversion.
+* Fixed: Processing stall — expiry processing no longer stalls when many already-processed expired posts pile up; the cron query now excludes already-processed posts. Any backlog of stuck posts will be processed on the first cron run after updating.
+* Fixed: Republished posts — expired-state side effects (410/noindex/redirect) are cleared on republish and on expiry removal.
+* Fixed: External redirects — editor-set external redirect URLs are now honored for visitors (previously fell back to the admin login); empty/invalid URLs fall back to the site home page.
+* Fixed: Reminder emails — now reach bulk-scheduled and rescheduled posts; the reminder flag resets when an expiry is moved to a new time (identical re-saves do nothing).
+* Fixed: Debug log privacy — logging defaults to OFF for new installations (existing installations keep their current setting); the log directory is protected against direct access on Apache servers (`.htaccess` + `index.php`); log writes are append-only with size-based rotation and retention cleanup.
 * Changed: Dev tooling security patch — composer dev-dependencies updated to clear CVE-2026-65954, CVE-2026-67434, and CVE-2026-45293; `composer audit` is now clean.
+* Changed: Removed the unreachable legacy cron pipeline; post-meta authorization now checks per-post edit capability; the expiry action value is validated when written via REST; uninstall is now multisite-aware (cleans all sites); the custom cron schedule labels are now translatable (2 new strings).
 * Note: Targeted `phpcs:ignore` (with rationale) on the dev-only translation script.
+* Note: Added regression tests for the timezone and processing-stall fixes (mock-based suite now 101 tests).
 
 = 1.7.3 =
 * Removed: deprecated admin CSS files (`admin-tokens.css`, `admin-components.css`) that were shipping to WordPress.org but never loaded by any PHP code.
@@ -250,7 +258,7 @@ The plugin includes translations for 20 languages: German (Germany and Switzerla
 == Upgrade Notice ==
 
 = 1.7.4 =
-Security scan release: type-safety hardening, cron logging improvement, and dev-dependency CVE cleanup. Recommended update.
+Security scan plus bug-fix release: timezone drift, processing stalls, republish state, external redirects, reminder emails, log privacy, and dev-dependency CVE cleanup. Recommended update.
 
 = 1.7.3 =
 Maintenance update: removes two deprecated CSS files that were never loaded, and adds accessibility improvements (table scopes, canvas labels, ARIA descriptions, fieldset legend). No functional changes — safe update.

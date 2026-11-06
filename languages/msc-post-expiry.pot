@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-05T14:08:37+00:00\n"
+"POT-Creation-Date: 2026-11-06T10:19:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: msc-post-expiry\n"
@@ -64,7 +64,7 @@ msgid "Redirect"
 msgstr ""
 
 #: includes/class-mscpe-analytics.php:293
-#: includes/class-mscpe-settings.php:925
+#: includes/class-mscpe-settings.php:934
 msgid "Delete"
 msgstr ""
 
@@ -78,7 +78,7 @@ msgstr ""
 
 #. translators: %d: Post ID number
 #: includes/class-mscpe-analytics.php:478
-#: includes/class-mscpe-module.php:548
+#: includes/class-mscpe-module.php:691
 #, php-format
 msgid "Post #%d"
 msgstr ""
@@ -165,19 +165,19 @@ msgid "No expiry activity recorded yet."
 msgstr ""
 
 #: includes/class-mscpe-analytics.php:634
-#: includes/class-mscpe-settings.php:1218
+#: includes/class-mscpe-settings.php:1227
 msgid "Post"
 msgstr ""
 
 #: includes/class-mscpe-analytics.php:635
-#: includes/class-mscpe-settings.php:898
-#: includes/class-mscpe-settings.php:964
-#: includes/class-mscpe-settings.php:1219
+#: includes/class-mscpe-settings.php:907
+#: includes/class-mscpe-settings.php:973
+#: includes/class-mscpe-settings.php:1228
 msgid "Action"
 msgstr ""
 
 #: includes/class-mscpe-analytics.php:636
-#: includes/class-mscpe-settings.php:899
+#: includes/class-mscpe-settings.php:908
 msgid "Status"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgid "Views"
 msgstr ""
 
 #: includes/class-mscpe-analytics.php:639
-#: includes/class-mscpe-settings.php:1220
+#: includes/class-mscpe-settings.php:1229
 msgid "Date"
 msgstr ""
 
@@ -203,95 +203,95 @@ msgstr ""
 msgid "Expired Posts"
 msgstr ""
 
-#: includes/class-mscpe-module.php:215
+#: includes/class-mscpe-module.php:231
 #: includes/class-mscpe-settings.php:576
 msgid "Post Expiry"
 msgstr ""
 
-#: includes/class-mscpe-module.php:216
+#: includes/class-mscpe-module.php:232
 msgid "Set an expiry date/time. Optionally override the action just for this post."
 msgstr ""
 
-#: includes/class-mscpe-module.php:217
+#: includes/class-mscpe-module.php:233
 msgid "Expiry date/time (local)"
 msgstr ""
 
-#: includes/class-mscpe-module.php:218
+#: includes/class-mscpe-module.php:234
 #: includes/class-mscpe-settings.php:626
 msgid "Action for this post"
 msgstr ""
 
-#: includes/class-mscpe-module.php:219
+#: includes/class-mscpe-module.php:235
 #: includes/class-mscpe-settings.php:635
 msgid "Redirect URL"
 msgstr ""
 
-#: includes/class-mscpe-module.php:220
+#: includes/class-mscpe-module.php:236
 #: includes/class-mscpe-settings.php:643
 msgid "Move to category"
 msgstr ""
 
-#: includes/class-mscpe-module.php:221
+#: includes/class-mscpe-module.php:237
 #: includes/class-mscpe-settings.php:651
 msgid "— Select —"
 msgstr ""
 
-#: includes/class-mscpe-module.php:236
+#: includes/class-mscpe-module.php:252
 msgid "Use global default"
 msgstr ""
 
-#: includes/class-mscpe-module.php:237
+#: includes/class-mscpe-module.php:253
 #: includes/class-mscpe-rules.php:318
 #: includes/class-mscpe-settings.php:279
 #: includes/class-mscpe-settings.php:468
 msgid "Move to Trash"
 msgstr ""
 
-#: includes/class-mscpe-module.php:238
+#: includes/class-mscpe-module.php:254
 #: includes/class-mscpe-rules.php:321
 #: includes/class-mscpe-settings.php:280
 #: includes/class-mscpe-settings.php:469
 msgid "Permanently Delete"
 msgstr ""
 
-#: includes/class-mscpe-module.php:239
+#: includes/class-mscpe-module.php:255
 #: includes/class-mscpe-rules.php:316
 #: includes/class-mscpe-settings.php:281
 #: includes/class-mscpe-settings.php:470
 msgid "Change to Draft"
 msgstr ""
 
-#: includes/class-mscpe-module.php:240
+#: includes/class-mscpe-module.php:256
 #: includes/class-mscpe-rules.php:317
 #: includes/class-mscpe-settings.php:282
 #: includes/class-mscpe-settings.php:471
 msgid "Change to Private"
 msgstr ""
 
-#: includes/class-mscpe-module.php:241
+#: includes/class-mscpe-module.php:257
 #: includes/class-mscpe-rules.php:319
 #: includes/class-mscpe-settings.php:283
 #: includes/class-mscpe-settings.php:472
 msgid "Move to Category"
 msgstr ""
 
-#: includes/class-mscpe-module.php:242
+#: includes/class-mscpe-module.php:258
 #: includes/class-mscpe-settings.php:473
 msgid "Redirect Only"
 msgstr ""
 
-#: includes/class-mscpe-module.php:253
+#: includes/class-mscpe-module.php:284
 msgid "Set expiry using default window"
 msgstr ""
 
 #. translators: %s is the post title
-#: includes/class-mscpe-module.php:512
+#: includes/class-mscpe-module.php:655
 #, php-format
 msgid "Post Expiring Soon: %s"
 msgstr ""
 
 #. translators: 1: Post title, 2: Expiry date/time, 3: Edit link
-#: includes/class-mscpe-module.php:517
+#: includes/class-mscpe-module.php:660
 #, php-format
 msgid ""
 "The following post is expiring soon:\n"
@@ -567,7 +567,7 @@ msgid "Each post can have its own expiry action, redirect URL, and target catego
 msgstr ""
 
 #: includes/class-mscpe-settings.php:479
-#: includes/class-mscpe-settings.php:884
+#: includes/class-mscpe-settings.php:893
 msgid "Smart Expiry Rules"
 msgstr ""
 
@@ -640,7 +640,7 @@ msgid "Set a canonical URL to redirect SEO value to another page."
 msgstr ""
 
 #: includes/class-mscpe-settings.php:496
-#: includes/class-mscpe-settings.php:814
+#: includes/class-mscpe-settings.php:823
 msgid "HTTP Status Code"
 msgstr ""
 
@@ -734,188 +734,196 @@ msgstr ""
 msgid "Used when the action is \"Move to Category\" (posts only)."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:768
+#: includes/class-mscpe-settings.php:777
 msgid "SEO settings saved."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:777
+#: includes/class-mscpe-settings.php:786
 msgid "SEO Settings for Expired Posts"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:778
+#: includes/class-mscpe-settings.php:787
 msgid "Configure how search engines handle expired content."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:786
+#: includes/class-mscpe-settings.php:795
 msgid "Noindex"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:790
+#: includes/class-mscpe-settings.php:799
 msgid "Add noindex to expired posts (prevents indexing)."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:795
+#: includes/class-mscpe-settings.php:804
 msgid "Nofollow"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:799
+#: includes/class-mscpe-settings.php:808
 msgid "Add nofollow to expired posts (prevents link following)."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:804
+#: includes/class-mscpe-settings.php:813
 msgid "Canonical"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:807
+#: includes/class-mscpe-settings.php:816
 msgid "No change"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:808
+#: includes/class-mscpe-settings.php:817
 msgid "Point to home page"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:809
+#: includes/class-mscpe-settings.php:818
 msgid "Point to primary category"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:820
+#: includes/class-mscpe-settings.php:829
 msgid "410 tells search engines the page is intentionally gone."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:826
+#: includes/class-mscpe-settings.php:835
 msgid "Save SEO Settings"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:853
+#: includes/class-mscpe-settings.php:862
 msgid "Rule not saved: the condition value could not be resolved. Check the expected format for the selected condition."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:866
+#: includes/class-mscpe-settings.php:875
 msgid "Rule saved."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:877
+#: includes/class-mscpe-settings.php:886
 msgid "Rule deleted."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:885
+#: includes/class-mscpe-settings.php:894
 msgid "Smart Rules automatically determine what happens when a post expires based on its properties — like category, tag, author, age, or custom fields. When a post expires, the plugin checks these rules in priority order. If a rule matches, its action overrides the default expiry action."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:895
+#: includes/class-mscpe-settings.php:904
 msgid "Rule"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:896
-#: includes/class-mscpe-settings.php:981
+#: includes/class-mscpe-settings.php:905
+#: includes/class-mscpe-settings.php:990
 msgid "Priority"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:897
-#: includes/class-mscpe-settings.php:947
+#: includes/class-mscpe-settings.php:906
+#: includes/class-mscpe-settings.php:956
 msgid "Condition"
 msgstr ""
 
 #. translators: %d: rule number.
-#: includes/class-mscpe-settings.php:912
+#: includes/class-mscpe-settings.php:921
 #, php-format
 msgid "Rule %d"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:918
-#: includes/class-mscpe-settings.php:988
+#: includes/class-mscpe-settings.php:927
+#: includes/class-mscpe-settings.php:997
 msgid "Enabled"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:920
+#: includes/class-mscpe-settings.php:929
 msgid "Disabled"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:924
+#: includes/class-mscpe-settings.php:933
 msgid "Delete this rule?"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:934
+#: includes/class-mscpe-settings.php:943
 msgid "Add New Rule"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:940
+#: includes/class-mscpe-settings.php:949
 msgid "Rule Name"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:943
+#: includes/class-mscpe-settings.php:952
 msgid "Optional — a short label so you can recognise the rule later."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:957
+#: includes/class-mscpe-settings.php:966
 msgid "Condition Value"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:960
+#: includes/class-mscpe-settings.php:969
 msgid "Category/tag slug or ID; author login or ID; minimum days for Post Age; a number or \"min-max\" range for Comment Count and Post Views; \"field_name=value\" (or just \"field_name\" for exists) for Custom Field."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:974
+#: includes/class-mscpe-settings.php:983
 msgid "Action Value"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:977
+#: includes/class-mscpe-settings.php:986
 msgid "Category ID or slug for \"Move to Category\", URL for \"Set Redirect URL\". Not used by other actions."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:984
+#: includes/class-mscpe-settings.php:993
 msgid "Lower number = higher priority. The first matching rule wins."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:992
+#: includes/class-mscpe-settings.php:1001
 msgid "Rule is active immediately after saving"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:998
+#: includes/class-mscpe-settings.php:1007
 msgid "Add Rule"
 msgstr ""
 
 #. translators: %d: number of days.
-#: includes/class-mscpe-settings.php:1150
+#: includes/class-mscpe-settings.php:1159
 #, php-format
 msgid "≥ %d days old"
 msgstr ""
 
 #. translators: %d: minimum count.
-#: includes/class-mscpe-settings.php:1164
+#: includes/class-mscpe-settings.php:1173
 #, php-format
 msgid "≥ %d"
 msgstr ""
 
 #. translators: %d: maximum count.
-#: includes/class-mscpe-settings.php:1168
+#: includes/class-mscpe-settings.php:1177
 #, php-format
 msgid "≤ %d"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:1209
+#: includes/class-mscpe-settings.php:1218
 msgid "Expiry Action History"
 msgstr ""
 
-#: includes/class-mscpe-settings.php:1210
+#: includes/class-mscpe-settings.php:1219
 msgid "Recent expiry actions (last 50 entries)."
 msgstr ""
 
-#: includes/class-mscpe-settings.php:1213
+#: includes/class-mscpe-settings.php:1222
 msgid "No expiry actions recorded yet."
 msgstr ""
 
-#: msc-post-expiry.php:172
-#: msc-post-expiry.php:177
+#: msc-post-expiry.php:84
+msgid "Every 5 minutes"
+msgstr ""
+
+#: msc-post-expiry.php:90
+msgid "Every 15 minutes"
+msgstr ""
+
+#: msc-post-expiry.php:188
+#: msc-post-expiry.php:193
 msgid "No expiry set"
 msgstr ""
 
-#: msc-post-expiry.php:182
+#: msc-post-expiry.php:201
 msgid "Expired"
 msgstr ""
 
 #. translators: %d is number of days
-#: msc-post-expiry.php:192
+#: msc-post-expiry.php:211
 #, php-format
 msgid "%d day remaining"
 msgid_plural "%d days remaining"
@@ -923,13 +931,13 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d is number of hours
-#: msc-post-expiry.php:200
+#: msc-post-expiry.php:219
 #, php-format
 msgid "%d hour remaining"
 msgid_plural "%d hours remaining"
 msgstr[0] ""
 msgstr[1] ""
 
-#: msc-post-expiry.php:205
+#: msc-post-expiry.php:224
 msgid "Expires soon"
 msgstr ""
